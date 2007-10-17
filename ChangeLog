@@ -1,0 +1,68 @@
+* format ( year-month-day)
+---- Version 0.1.5
+* 2007-10-17:
+  * Fixed gcc compile fix
+  * Added _NET_DESKTOP_LAYOUT support
+    Which allows the WM to know the desktop layout displayed by 
+    the pager.
+---- Version 0.1.4
+* 2004-03-24:
+  * Fixed the sticky bug
+    Workspace.cc, FbPager.cc
+  * new resources (Thanks Mathias Gumz)
+    fbpager.color
+    fbpager.followMe
+    fbpager.icons
+    fbpager.windowBorderWidth
+    FbPager.hh/cc, Workspace.hh/cc, FbPixmap.hh/cc
+* 2004-03-02:
+  * Added support for _NET_CLOSE_WINDOW (Thanks Mathias Gumz)
+    Ewmh.hh/cc
+  * Added new resources (Thanks Mathias Gumz)
+    fbpager.x
+    fbpager.y
+    fbpager.closeButton
+   FbPager.hh/cc, FluxboxHandler.hh/cc, ClientHandler.hh
+* 2004-03-01:
+  * Fixed bug in drag window to workspace (Thanks Mathias Gumz)
+    FbPager.cc
+* 2004-02-29:
+  * Drag window to workspace (Thanks Mathias Gumz)
+    check README for resource values
+* 2004-02-28:
+  * Added ClientHandler::sendToWorkspace(client, workspace_num) (Henrik)
+    ClientHandler.hh, FluxboxHandler.hh/cc, Ewmh.hh/cc
+  * Added -sr argument
+    This will show the resources and value and exit fbpager
+    main.cc, FbPager.hh/cc
+  * alot of new resources and updates, check README  (Thanks Mathias Gumz)  
+* 2004-02-27:
+  * Fixed mouse gestures (Thanks Mathias Gumz)
+    FbPager.hh/cc
+  * Added fbpager.nextWorkspaceButton and fbpager.prevWorkspaceButton
+    (Thanks Mathias Gumz)
+    Use these to define which button combination to move to next/prev 
+    workspace
+    FbPager.cc
+  * Added fbpager.exitButton resource  (Thanks Mathias Gumz)
+    Use this to define what button combination that exit fbpager
+    default value: 1 3 3
+    FbPager.cc
+  * Fixed bug in StringUtil (Thanks Mathias Gumz)
+    StringUtil.cc
+* 2004-02-25:
+  * Stop window from moving outside visible area (Thanks Mathias Gumz)
+    FbPager.cc
+  * Fixed minor memory leak on exit
+  * Added FbRootWindow and ClientWindow
+  * Minor cleaning
+* 2004-02-24
+  * Added so one can move windows
+    Workspace.hh/cc, FbPager.hh/cc
+* 2004-02-23
+  * Fixed subversion for fbpager
+* 2004-02-14
+  * Added better support for Extended Window Manager Hints
+    Ewmh.cc
+  * Fixed alpha bug in withdrawn state
+    FbWindow.cc

@@ -1,0 +1,85 @@
+Author:
+Henrik Kinnunen (fluxgen at fluxbox dot org)
+
+Contributors:
+Many thanks to Mathias Gumz (gumz at cs dot uni-magdeburg dot de)
+for adding mouse gestures, bug fixing and other patches.
+
+Usage: 
+./fbpager <argument>
+Arguments: 
+  -display <displayname>
+  -w              withdrawn state (i.e in the Slit)
+  -rc <filename>  resource file (default: ~/.fluxbox/fbpager)
+  -sr             show resources
+  -s <screen number> (default: 0)
+  -v              show version
+  -h              show this help
+
+Default resource file:
+~/.fluxbox/fbpager
+
+Resources with default values:
+
+fbpager.alpha: 255
+fbpager.x: 0
+fbpager.y: 0
+fbpager.workspace.width: 64
+fbpager.workspace.height: 64
+fbpager.workspacesPerRow: 6400
+fbpager.followDrag: false
+fbpager.followMove: false
+fbpager.changeWorkspaceButton: 11
+fbpager.raiseWindowButton: 2
+fbpager.lowerWindowButton: 3
+fbpager.closeWindowButton: 3 3 1
+fbpager.exitButton: 1 3 3
+fbpager.nextWorkspaceButton: 4
+fbpager.prevWorkspaceButton: 5
+fbpager.moveInWorkspaceButton: 1
+fbpager.dragToWorkspaceButton: 2
+fbpager.align: LeftToRight
+fbpager.color: white
+fbpager.windowColor: white
+fbpager.focusedWindowColor: white
+fbpager.windowBorderColor: black
+fbpager.backgroundColor: darkgray
+fbpager.currentBackgroundColor: lightgray
+fbpager.multiClickTime: 250
+fbpager.icons: false
+fbpager.windowBorderWidth: 1
+fbpager.layer: 0
+
+Most of the resources should be self-explanatory, but some are explained
+in the notes section below.
+
+Notes:
+
+You can do mouse gestures with the button bindings.
+
+To exit fbpager you click button 1 and then button 3 two times
+
+fbpager.workspacesPerRow, this should be a big number if you 
+dont want it to change row.
+
+fbpager.next/prevWorkspace is default to scroll up/down with 
+the mouse wheel
+
+Multipleclicks are represented by  a repetition of the button
+   eg:  11 is a double leftclick
+        111 is a tripple leftclick
+
+The time between multiclicks is adjustable via:
+fbpager.multiClickTime: int (default 250(ms))
+
+The time between each buttonpress must lay under 1 second,
+if its bigger, the button queue gets flushed
+ 
+Homepage:
+http://fluxbox.org/fbpager/
+
+Subversion repository:
+svn checkout svn://anonymous@fluxbox.cer.sgsnet.se/fbpager
+
+License:
+MIT License ( http://www.opensource.org/licenses/mit-license.php )
