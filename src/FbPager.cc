@@ -31,11 +31,9 @@
 
 // client handlers
 #include "Ewmh.hh"
-#include "FluxboxHandler.hh"
 
 #include "Workspace.hh"
 #include "WindowHint.hh"
-#include "FbAtoms.hh"
 #include "ScaleWindowToWindow.hh"
 #include "Resources.hh"
 #include "RefBinder.hh"
@@ -119,8 +117,6 @@ namespace FbPager {
 
 
 FbPager::FbPager(int screen_num, bool withdraw, 
-                 bool use_fbhandler,
-                 bool use_ewmhhandler,
                  bool show_resources,
                  int layer_flag,
                  const char *resource_filename):
@@ -236,12 +232,7 @@ FbPager::FbPager(int screen_num, bool withdraw,
                                       "FbPager.Border.Inactive.Color"),
     m_last_workspace_num(-1) {
 
-
-    if (use_fbhandler)
-        m_clienthandlers.push_back(new FluxboxHandler());
-
-    if (use_ewmhhandler) 
-        m_clienthandlers.push_back(new Ewmh());
+    m_clienthandlers.push_back(new Ewmh());
 
     XSetErrorHandler(handleXErrors);
 
@@ -251,17 +242,6 @@ FbPager::FbPager(int screen_num, bool withdraw,
     m_window.setBackgroundColor(FbTk::Color((*m_color_str).c_str(), 
                                             m_window.screenNumber()));
     m_window.setAlpha(*m_alpha);
-
-
-    Display *disp = FbTk::App::instance()->display();
-    Atom wmproto[2];
-    int wmprot_size = 1;
-    wmproto[0] = XInternAtom(disp, "WM_DELETE_WINDOW", False);
-    if (FluxboxHandler::handler() != 0) {
-        wmprot_size = 2;
-        wmproto[1] = FbAtoms::instance()->getFluxboxStructureMessagesAtom();
-    }
-    XSetWMProtocols(disp, m_window.window(), wmproto, wmprot_size);
 
 
     XWMHints wmhints;
@@ -286,6 +266,7 @@ FbPager::FbPager(int screen_num, bool withdraw,
     XStringListToTextProperty(&name_prop, 1, &windowname);
 
     // setup class hints
+    Display *disp = FbTk::App::instance()->display();
     XClassHint classhints;
     string res_name = "fbpager";
     string res_class = "FbPager";

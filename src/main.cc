@@ -56,8 +56,6 @@ int main(int argc, char **argv) {
     std::string displayname;
     bool withdraw = false;
     std::string resourcefile("~/.fluxbox/fbpager");
-    bool ewmh = true;
-    bool fbhints = true;
     bool show_resources = false;
     int layer = -1;
     for (int arg = 1; arg < argc; ++arg) {
@@ -101,8 +99,6 @@ int main(int argc, char **argv) {
         }
 
         FbPager::FbPager fbpager(screen_num, withdraw, 
-                                 fbhints,
-                                 ewmh,
                                  show_resources,
                                  layer,
                                  resourcefile.c_str());

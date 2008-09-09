@@ -47,8 +47,6 @@ class FbPager:public FbTk::EventHandler, public Pager, private FbTk::NotCopyable
 public:
     enum Alignment { LEFT_TO_RIGHT, TOP_TO_BOTTOM};
     FbPager(int screen_num, bool withdraw, 
-            bool use_fbhandler,
-            bool use_ewhmhandler,
             bool show_resources,
             int layer_flags,
             const char *resource_filename=0);
