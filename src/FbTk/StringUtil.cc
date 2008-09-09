@@ -30,8 +30,9 @@
 #include <cassert>
 #include <memory>
 #include <algorithm>
+#include <string.h>
 
-using namespace std;
+using std::string;
 
 namespace FbTk {
 

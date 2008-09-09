@@ -35,7 +35,7 @@ public:
     void setFocus(FbTk::FbWindow &win);
     void moveResize(FbTk::FbWindow &win) { }
     void sendToWorkspace(FbTk::FbWindow &win, int workspace);
-    void closeWindow(FbTk::FbWindow &win);
+    void closeWindow(FbTk::FbWindow &win) { }
     bool clientMessage(Pager &pager, XClientMessageEvent &event);
     void changeWorkspace(int screen_num, int workspace);
     void setHints(FbTk::FbWindow &win, WindowHint &hints);

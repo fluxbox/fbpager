@@ -27,6 +27,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <string>
+#include <string.h>
 #include "version.h"
 
 using namespace std;

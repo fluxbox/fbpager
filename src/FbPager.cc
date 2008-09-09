@@ -327,8 +327,8 @@ FbPager::FbPager(int screen_num, bool withdraw,
     if (!withdraw) {
         WindowHint hint;
         hint.add(WindowHint::WHINT_NO_DECOR | WindowHint::WHINT_SKIP_TASKBAR |
-                 WindowHint::WHINT_STICKY | WindowHint::WHINT_SKIP_PAGER | 
-                 WindowHint::WHINT_HIDDEN | extra_flags );
+                 WindowHint::WHINT_STICKY | WindowHint::WHINT_SKIP_PAGER |
+                 extra_flags );
         ClientHandlerList::iterator it = m_clienthandlers.begin();
         ClientHandlerList::iterator it_end = m_clienthandlers.end();
         for (; it != it_end; ++it)

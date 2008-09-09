@@ -92,10 +92,6 @@ void FluxboxHandler::sendToWorkspace(FbTk::FbWindow &client, int workspace) {
                       workspace);
 }
 
-void FluxboxHandler::closeWindow(FbTk::FbWindow &win) {
-}
-   
-
 bool FluxboxHandler::clientMessage(Pager &pager, XClientMessageEvent &event) {
     const FbAtoms &fbatoms = *FbAtoms::instance();
     if (event.data.l[0] == fbatoms.getFluxboxNotifyWorkspaceCountAtom()) {
