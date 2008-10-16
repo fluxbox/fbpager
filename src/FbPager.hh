@@ -1,6 +1,6 @@
 // FbPager.hh for FbPager
 // Copyright (c) 2003-2007 Henrik Kinnunen (fluxgen at fluxbox org)
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the "Software"),
 // to deal in the Software without restriction, including without limitation
@@ -46,7 +46,7 @@ class ClientHandler;
 class FbPager:public FbTk::EventHandler, public Pager, private FbTk::NotCopyable {
 public:
     enum Alignment { LEFT_TO_RIGHT, TOP_TO_BOTTOM};
-    FbPager(int screen_num, bool withdraw, 
+    FbPager(int screen_num, bool withdraw,
             bool show_resources,
             int layer_flags,
             const char *resource_filename=0);
@@ -61,8 +61,8 @@ public:
      */
     //@{
     void handleEvent(XEvent &event);
-    void buttonPressEvent(XButtonEvent &event);	
-    void buttonReleaseEvent(XButtonEvent &event);	
+    void buttonPressEvent(XButtonEvent &event);
+    void buttonReleaseEvent(XButtonEvent &event);
     void motionNotifyEvent(XMotionEvent &event);
     void exposeEvent(XExposeEvent &event);
     //@}
@@ -83,6 +83,11 @@ public:
             return false;
         return true;
     }
+
+    void eraseAllWindows();
+
+    void addWindows(const WindowsAndWorkspaces& windows);
+
 private:
     void clientMessageEvent(XClientMessageEvent &event);
     void propertyEvent(XPropertyEvent &event);
@@ -90,7 +95,7 @@ private:
 
 
     void alignWorkspaces();
-    
+
     void sendChangeToWorkspace(unsigned int num);
     void updateWindowHints(Window win);
     void load(const std::string &filename);
@@ -99,13 +104,13 @@ private:
     FbTk::FbWindow m_window;
 
     typedef std::vector<Workspace *> WorkspaceList;
-    typedef std::list<ClientHandler *> ClientHandlerList;
+    typedef std::vector<ClientHandler *> ClientHandlerList;
     typedef std::set<Window> WindowList;
 
     ClientHandlerList m_clienthandlers;
     WorkspaceList m_workspaces;
     WindowList m_windows;
-    
+
     unsigned int m_curr_workspace;
 
     struct MoveWindow {
@@ -135,7 +140,7 @@ private:
     FbTk::Resource<std::string> m_prev_workspace_button;
     FbTk::Resource<int>         m_move_in_workspace_button;
     FbTk::Resource<int>         m_drag_to_workspace_button;
-    
+
     FbTk::Resource<Alignment>   m_align;
     FbTk::Resource<std::string> m_color_str;
     FbTk::Resource<std::string> m_window_color_str, m_focused_window_color_str;
@@ -152,7 +157,7 @@ private:
     std::string                 m_button_queue;
     XButtonEvent                m_last_button_event;
     int                         m_last_workspace_num;
-    
+
 };
 
 } // end namespace FbPager

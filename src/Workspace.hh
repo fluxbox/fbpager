@@ -1,6 +1,6 @@
 // Workspace.hh for FbPager
 // Copyright (c) 2003 Henrik Kinnunen (fluxgen at users.sourceforge.net)
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the "Software"),
 // to deal in the Software without restriction, including without limitation
@@ -45,12 +45,12 @@ class Workspace:private FbTk::NotCopyable {
 public:
 
     /// create a workspace with specified name, size, parent and eventhandler
-    Workspace(FbTk::EventHandler &evh, 
-              FbTk::FbWindow &parent, unsigned int width, unsigned int height, 
+    Workspace(FbTk::EventHandler &evh,
+              FbTk::FbWindow &parent, unsigned int width, unsigned int height,
               const FbTk::Color &focused_win_color,
-              const FbTk::Color &wincolor, 
+              const FbTk::Color &wincolor,
               const FbTk::Color &border_color,
-              const FbTk::Color &background_color, 
+              const FbTk::Color &background_color,
               const char *name = 0,
               const bool use_pixmap = true,
               const int window_border_width = 1);
@@ -63,6 +63,8 @@ public:
     void resize(unsigned int width, unsigned int height);
     /// remove a window from workspace
     void remove(Window win);
+    /// remove all windows from this workspace
+    void removeAll();
     void shadeWindow(Window win);
     void unshadeWindow(Window win);
     void iconifyWindow(Window win);
@@ -88,9 +90,9 @@ public:
     const FbTk::FbWindow *find(Window win) const;
     /// @return workspace name
     const std::string &name() const { return m_name; }
-    /// @return the workspace's FbWindow 
+    /// @return the workspace's FbWindow
     const FbTk::FbWindow &window() const { return m_window; }
-    /// @return the workspace's FbWindow 
+    /// @return the workspace's FbWindow
     FbTk::FbWindow &window() { return m_window; }
 
     static void setFocusedWindow(Window win) { s_focused_window = win; }
@@ -98,7 +100,7 @@ public:
 private:
 
     void updateBackground(Window win, const FbTk::Color& bg_color);
-    
+
     std::string m_name; ///< name of this workspace
     FbTk::FbWindow m_window; ///< FbWindow of this workspace
     FbTk::EventHandler &m_eventhandler;
@@ -113,7 +115,7 @@ private:
 
     bool m_use_pixmap;
     int  m_window_border_width;
-    
+
 };
 
 }; // end namespace FbPager

@@ -1,6 +1,6 @@
 // Ewmh.cc for FbPager
 // Copyright (c) 2004 Henrik Kinnunen (fluxgen at users.sourceforge.net)
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the "Software"),
 // to deal in the Software without restriction, including without limitation
@@ -27,6 +27,7 @@
 #include "FbTk/App.hh"
 #include "FbTk/FbWindow.hh"
 #include "FbRootWindow.hh"
+#include "PropertyTools.hh"
 
 #include <X11/Xatom.h>
 
@@ -36,7 +37,41 @@
 #include <unistd.h>
 #include <memory>
 
+
 using namespace std;
+using namespace PropertyTools;
+
+
+struct PropT {
+    PropT(unsigned char *data, unsigned int num):data(data), num(num) {   }
+    ~PropT() {
+        if (data != 0)
+            XFree(data);
+    }
+    unsigned char *data;
+    unsigned int num;
+};
+
+
+typedef std::auto_ptr<PropT> PropTPtr;
+
+PropT *property(const FbTk::FbWindow &win, Atom atom,
+                Atom type, unsigned int num) {
+    Atom ret_type;
+    int fmt;
+    unsigned long nitems, bytes_after;
+    unsigned char *data = 0;
+    win.property(atom,
+                 0, num,
+                 False,
+                 type,
+                 &ret_type, &fmt,
+                 &nitems,
+                 &bytes_after,
+                 &data);
+    return new PropT(data, nitems);
+
+}
 
 namespace FbPager {
 
@@ -56,7 +91,7 @@ public:
         wm_pid = XInternAtom(disp, "_NET_WM_PID", False);
         wm_type = XInternAtom(disp, "_NET_WM_WINDOW_TYPE", False);
         type_dock = XInternAtom(disp, "_NET_WM_WINDOW_TYPE_DOCK", False);
-        number_of_desktops = XInternAtom(disp, "_NET_NUMBER_OF_DESKTOPS", False);        
+        number_of_desktops = XInternAtom(disp, "_NET_NUMBER_OF_DESKTOPS", False);
         current_desktop = XInternAtom(disp, "_NET_CURRENT_DESKTOP", False);
         clientlist = XInternAtom(disp, "_NET_CLIENT_LIST", False);
         moveresize_window = XInternAtom(disp, "_NET_MOVERESIZE_WINDOW", False);
@@ -64,11 +99,11 @@ public:
         close_window = XInternAtom(disp, "_NET_CLOSE_WINDOW", False);
         desktop_layout = XInternAtom(disp, "_NET_DESKTOP_LAYOUT", False);
     }
-    Atom state_skip_pager, state_skip_taskbar, state_sticky, 
+    Atom state_skip_pager, state_skip_taskbar, state_sticky,
         state_hidden, state_shaded, state_above, state_below;
     Atom wm_desktop, wm_state, wm_pid, wm_type;
     Atom type_dock;
-    Atom number_of_desktops, current_desktop; 
+    Atom number_of_desktops, current_desktop;
     Atom clientlist;
     Atom moveresize_window;
     Atom active_window;
@@ -106,11 +141,11 @@ void Ewmh::setDesktopLayout(FbTk::FbWindow &root,
                         (unsigned char*)data, 4 );
 }
 
-void Ewmh::moveResize(FbTk::FbWindow &win) { 
+void Ewmh::moveResize(FbTk::FbWindow &win) {
 
-    // We can't do this yet, there is a bug in fluxbox 0.9.8 
+    // We can't do this yet, there is a bug in fluxbox 0.9.8
     // and this makes it crash (it's fixed in cvs though)
-    /*      
+    /*
             Display *disp = FbTk::App::instance()->display();
             XEvent event;
             event.xclient.display = disp;
@@ -144,9 +179,44 @@ void Ewmh::closeWindow(FbTk::FbWindow &win) {
     XSendEvent(disp, RootWindow(disp, DefaultScreen(disp)), False, SubstructureNotifyMask, &event);
 }
 
+bool Ewmh::propertyNotify(Pager &pager, XPropertyEvent &event) try {
+    if (event.window != DefaultRootWindow(FbTk::App::instance()->display())) {
+        return false;
+    }
+    if (event.atom == m_data->current_desktop) {
+        pager.setCurrentWorkspace(getIntProperty(event.window, event.atom));
+    } else if (event.atom == m_data->number_of_desktops) {
+        pager.updateWorkspaceCount(getIntProperty(event.window, event.atom));
+    } else if (event.atom == m_data->active_window) {
+        pager.setFocusedWindow(getWinProperty(event.window, event.atom));
+    } else if (event.atom == m_data->clientlist) {
+        vector<Window> windows;
+        getWinArrayProperty(DefaultRootWindow(FbTk::App::instance()->display()), event.atom, windows);
+        std::vector< pair<Window, unsigned int > > wins_workspaces;
+        for ( unsigned int win = 0; win < windows.size(); ++win ) {
+            wins_workspaces.
+                push_back( std::make_pair(windows[win],
+                                          getIntProperty(windows[win],
+                                                         m_data->wm_desktop)));
+        }
+        pager.addWindows(wins_workspaces);
+    } else {
+        // did not handle it here
+        return false;
+    }
+
+    return true;
+
+} catch ( const PropertyException& e ) {
+    cerr << "Ewmh Exception: " << e.what() << endl;
+    // we handle it
+    return true;
+}
+
 bool Ewmh::clientMessage(Pager &pager, XClientMessageEvent &event) {
     if (!m_support)
-        return false;
+      return false;
+
 
     if (event.message_type == m_data->current_desktop) {
         pager.setCurrentWorkspace(event.data.l[0]);
@@ -180,7 +250,7 @@ void Ewmh::changeWorkspace(int screen_num, int workspace) {
 }
 
 void Ewmh::setHints(FbTk::FbWindow &win, WindowHint &hint) {
-    
+
     int data = getpid();
     win.changeProperty(m_data->wm_pid,
                        XA_CARDINAL,
@@ -237,36 +307,6 @@ void Ewmh::setHints(FbTk::FbWindow &win, WindowHint &hint) {
     delete [] state_atoms;
 }
 
-
-struct PropT {
-    PropT(unsigned char *data, unsigned int num):data(data), num(num) {   }
-    ~PropT() {
-        if (data != 0)
-            XFree(data);
-    }
-    unsigned char *data;
-    unsigned int num;
-};
-
-typedef std::auto_ptr<PropT> PropTPtr;
-
-PropT *property(const FbTk::FbWindow &win, Atom atom,
-                Atom type, unsigned int num) {
-    Atom ret_type;
-    int fmt;
-    unsigned long nitems, bytes_after;
-    unsigned char *data = 0;
-    win.property(atom,
-                 0, num,
-                 False,
-                 type,
-                 &ret_type, &fmt,
-                 &nitems,
-                 &bytes_after,
-                 &data);
-    return new PropT(data, nitems);
-
-}
 
 void Ewmh::getHints(const FbTk::FbWindow &win, WindowHint &hint) const {
     PropTPtr p(property(win,

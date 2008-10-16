@@ -1,6 +1,9 @@
 #ifndef PAGER_HH
 #define PAGER_HH
 
+#include <vector>
+#include <utility>
+
 namespace FbPager {
 
 /// @brief pager interface
@@ -18,6 +21,11 @@ public:
     virtual void updateWorkspaceCount(unsigned int num) = 0;
     virtual void setCurrentWorkspace(unsigned int num) = 0;
     virtual bool haveWindow(Window win) = 0;
+    /// Window and workspace pair container
+    typedef std::vector< std::pair<Window, unsigned int> > WindowsAndWorkspaces;
+
+    virtual void addWindows(const WindowsAndWorkspaces& windows) = 0;
+
 };
 
 } // end FbPager namespace

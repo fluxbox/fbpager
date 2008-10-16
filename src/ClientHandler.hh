@@ -1,6 +1,6 @@
 // ClientHandler.hh for FbPager
 // Copyright (c) 2004 Henrik Kinnunen (fluxgen at users.sourceforge.net)
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the "Software"),
 // to deal in the Software without restriction, including without limitation
@@ -59,6 +59,7 @@ public:
                                   Orientation orientation,
                                   Corner starting_corner,
                                   unsigned int columns, unsigned int rows) = 0;
+    virtual bool propertyNotify( Pager &pager, XPropertyEvent &event) = 0;
 };
 
 } // end namespace FbPager

@@ -1,6 +1,6 @@
 // Workspace.cc for FbPager
 // Copyright (c) 2003-2004 Henrik Kinnunen (fluxgen at users.sourceforge.net)
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the "Software"),
 // to deal in the Software without restriction, including without limitation
@@ -41,7 +41,7 @@ namespace FbPager {
 
 Window Workspace::s_focused_window = 0;
 
-Workspace::Workspace(FbTk::EventHandler &evh, 
+Workspace::Workspace(FbTk::EventHandler &evh,
                      FbTk::FbWindow &parent, unsigned int width, unsigned int height,
                      const FbTk::Color &focused_win_color,
                      const FbTk::Color &wincolor, const FbTk::Color &border_color,
@@ -60,7 +60,7 @@ Workspace::Workspace(FbTk::EventHandler &evh,
     m_window_bordercolor(border_color),
     m_focused_window(0),
     m_use_pixmap(use_pixmap),
-    m_window_border_width(window_border_width) { 
+    m_window_border_width(window_border_width) {
 
     m_window.setBackgroundColor(background_color);
     FbTk::EventManager::instance()->add(evh, m_window);
@@ -86,7 +86,7 @@ void Workspace::add(Window win) {
 
     fbwin = new FbTk::FbWindow(m_window,  // parent
                                0, 0, // pos
-                               10, 10, // size 
+                               10, 10, // size
                                // event mask
                                ExposureMask);
     //    fbwin->setAlpha(m_window.alpha());
@@ -101,7 +101,7 @@ void Workspace::add(Window win) {
 
     // add window to list
     m_windowlist[win] = fbwin;
-    
+
     // update pos and size
     updateGeometry(win);
 
@@ -164,12 +164,12 @@ void Workspace::raiseWindow(Window win) {
 }
 
 void Workspace::setWindowColor(const std::string &focused,
-                               const std::string &unfocused, 
+                               const std::string &unfocused,
                                const std::string &bordercolor_str) {
     m_window_color = FbTk::Color(unfocused.c_str(), m_window.screenNumber());
     m_focused_window_color = FbTk::Color(focused.c_str(), m_window.screenNumber());
     m_window_bordercolor = FbTk::Color(bordercolor_str.c_str(), m_window.screenNumber());
-    
+
     WindowList::iterator it = m_windowlist.begin();
     WindowList::iterator it_end = m_windowlist.end();
     for (; it != it_end; ++it) {
@@ -186,7 +186,7 @@ void Workspace::setAlpha(unsigned char alpha) {
     WindowList::iterator it_end = m_windowlist.end();
     for (; it != it_end; ++it) {
         (*it).second->setAlpha(alpha);
-    }    
+    }
 }
 
 void Workspace::clearWindows() {
@@ -216,6 +216,16 @@ void Workspace::remove(Window win) {
     m_windowlist.erase(win);
 }
 
+
+void Workspace::removeAll() {
+    WindowList::iterator it = m_windowlist.begin();
+    for (; it != m_windowlist.end(); ++it) {
+        FbTk::EventManager::instance()->remove(*(it->second));
+        delete it->second;
+    }
+    m_windowlist.clear();
+}
+
 ClientWindow Workspace::findClient(const FbTk::FbWindow &win) const {
     WindowList::const_iterator it = m_windowlist.begin();
     WindowList::const_iterator it_end = m_windowlist.end();
@@ -230,8 +240,8 @@ FbTk::FbWindow *Workspace::find(Window win) {
     WindowList::iterator it = m_windowlist.begin();
     WindowList::iterator it_end = m_windowlist.end();
     for (; it != it_end; ++it) {
-        if ((*it).second->window() == win || 
-            (*it).first == win) 
+        if ((*it).second->window() == win ||
+            (*it).first == win)
             return it->second;
     }
     return 0;
@@ -241,8 +251,8 @@ const FbTk::FbWindow *Workspace::find(Window win) const {
     WindowList::const_iterator it = m_windowlist.begin();
     WindowList::const_iterator it_end = m_windowlist.end();
     for (; it != it_end; ++it) {
-        if ((*it).second->window() == win || 
-            (*it).first == win) 
+        if ((*it).second->window() == win ||
+            (*it).first == win)
             return it->second;
     }
     return 0;
@@ -251,7 +261,7 @@ const FbTk::FbWindow *Workspace::find(Window win) const {
 void Workspace::updateFocusedWindow() {
     if (s_focused_window == 0)
         return;
-   
+
     FbTk::FbWindow *fbwin = find(s_focused_window);
     if (fbwin == m_focused_window)
         return;
@@ -290,9 +300,9 @@ void Workspace::updateGeometry(Window win) {
 
     int x = 0, y = 0;
     Window child;
-    ClientWindow client(win);    
+    ClientWindow client(win);
     FbRootWindow rootwin(m_window.screenNumber());
-    rootwin.translateCoordinates(client, 
+    rootwin.translateCoordinates(client,
                                  client.x(), client.y(),
                                  x, y,
                                  child);
@@ -314,9 +324,9 @@ void Workspace::updateGeometry(Window win) {
 void Workspace::updateBackground(Window win, const FbTk::Color &bg_color) {
 
     FbTk::FbWindow* fbwin= find(win);
-    if (!fbwin ) 
+    if (!fbwin )
         return;
-  
+
 
     if (m_use_pixmap) {
         XWMHints *hints = XGetWMHints(FbTk::App::instance()->display(), win);
@@ -328,9 +338,9 @@ void Workspace::updateBackground(Window win, const FbTk::Color &bg_color) {
         }
         else
             fbwin->setBackgroundColor(bg_color);
-          
+
         XFree(hints);
-    } 
+    }
     else
         fbwin->setBackgroundColor(bg_color);
 }

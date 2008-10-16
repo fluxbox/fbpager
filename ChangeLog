@@ -1,9 +1,12 @@
 * format ( year-month-day)
+----- Version 0.1.6
+* 2008-10-16:
+  * Fixed so Extended Window Manager Hints actually work.
 ---- Version 0.1.5
 * 2007-10-17:
   * Fixed gcc compile fix
   * Added _NET_DESKTOP_LAYOUT support
-    Which allows the WM to know the desktop layout displayed by 
+    Which allows the WM to know the desktop layout displayed by
     the pager.
 ---- Version 0.1.4
 * 2004-03-24:
@@ -35,13 +38,13 @@
   * Added -sr argument
     This will show the resources and value and exit fbpager
     main.cc, FbPager.hh/cc
-  * alot of new resources and updates, check README  (Thanks Mathias Gumz)  
+  * alot of new resources and updates, check README  (Thanks Mathias Gumz)
 * 2004-02-27:
   * Fixed mouse gestures (Thanks Mathias Gumz)
     FbPager.hh/cc
   * Added fbpager.nextWorkspaceButton and fbpager.prevWorkspaceButton
     (Thanks Mathias Gumz)
-    Use these to define which button combination to move to next/prev 
+    Use these to define which button combination to move to next/prev
     workspace
     FbPager.cc
   * Added fbpager.exitButton resource  (Thanks Mathias Gumz)

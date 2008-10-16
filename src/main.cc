@@ -1,6 +1,6 @@
 // main.cc for FbPager
 // Copyright (c) 2003-2004 Henrik Kinnunen (fluxgen at users.sourceforge.net)
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the "Software"),
 // to deal in the Software without restriction, including without limitation
@@ -98,7 +98,7 @@ int main(int argc, char **argv) {
             throw string("Display connection");
         }
 
-        FbPager::FbPager fbpager(screen_num, withdraw, 
+        FbPager::FbPager fbpager(screen_num, withdraw,
                                  show_resources,
                                  layer,
                                  resourcefile.c_str());
