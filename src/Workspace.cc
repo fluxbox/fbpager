@@ -224,6 +224,7 @@ void Workspace::removeAll() {
         delete it->second;
     }
     m_windowlist.clear();
+    s_focused_window = 0;
 }
 
 ClientWindow Workspace::findClient(const FbTk::FbWindow &win) const {
