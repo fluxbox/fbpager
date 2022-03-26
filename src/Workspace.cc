@@ -108,8 +108,7 @@ void Workspace::add(Window win) {
     fbwin->show();
     fbwin->setBorderWidth(m_window_border_width);
     fbwin->setBorderColor(m_window_bordercolor);
-
-    updateBackground(win, m_window_color);
+    fbwin->setBackgroundColor(m_window_color);
 }
 
 void Workspace::resize(unsigned int width, unsigned int height) {
@@ -174,7 +173,7 @@ void Workspace::setWindowColor(const std::string &focused,
     WindowList::iterator it_end = m_windowlist.end();
     for (; it != it_end; ++it) {
         it->second->setBorderColor(m_window_bordercolor);
-        updateBackground(it->first, m_window_color);
+        it->second->setBackgroundColor(m_window_color);
     }
     updateFocusedWindow();
 }
@@ -194,9 +193,7 @@ void Workspace::clearWindows() {
     WindowList::iterator it = m_windowlist.begin();
     WindowList::iterator it_end = m_windowlist.end();
     for (; it != it_end; ++it) {
-        if (m_use_pixmap) {
-            updateBackground(it->first,m_window_color);
-        }
+        it->second->setBackgroundColor(m_window_color);
         it->second->clear();
     }
 }
@@ -270,7 +267,7 @@ void Workspace::updateFocusedWindow() {
 
     if (m_focused_window != 0) {
 
-        updateBackground(m_focused_window->window(), m_window_color);
+        m_focused_window->setBackgroundColor(m_window_color);
         m_focused_window->clear();
     }
 
@@ -291,6 +288,7 @@ void Workspace::updateFocusedWindow() {
 
     updateBackground(it->first, m_focused_window_color);
     fbwin->clear();
+    fbwin->raise();
     m_focused_window = fbwin;
 }
 
