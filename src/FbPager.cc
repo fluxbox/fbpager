@@ -239,7 +239,7 @@ FbPager::FbPager(int screen_num, bool withdraw,
     FbTk::EventManager::instance()->add(*this, m_window);
 
     // setup client window
-    m_window.setBackgroundColor(FbTk::Color((*m_color_str).c_str(),
+    m_window.setBackgroundColor(FbTk::Color(m_color_str->c_str(),
                                             m_window.screenNumber()));
     m_window.setAlpha(*m_alpha);
 
@@ -663,11 +663,12 @@ void FbPager::exposeEvent(XExposeEvent &event) {
 }
 
 void FbPager::clientMessageEvent(XClientMessageEvent &event) {
+/*
     char* atom = XGetAtomName( FbTk::App::instance()->display(),
                                event.message_type );
     cout << "ClientMessage ATOM: " << atom << endl;
     XFree( atom );
-
+*/
     ClientHandlerList::iterator it = m_clienthandlers.begin();
     ClientHandlerList::iterator it_end = m_clienthandlers.end();
     for (; it != it_end; ++it) {
@@ -983,7 +984,7 @@ void FbPager::load(const std::string &filename) {
         cerr<<"Failed to load resource file: "<<filename<<endl;
 
     m_window.setAlpha(*m_alpha);
-    m_window.setBackgroundColor(FbTk::Color((*m_color_str).c_str(), m_window.screenNumber()));
+    m_window.setBackgroundColor(FbTk::Color(m_color_str->c_str(), m_window.screenNumber()));
     FbTk::Color bgcolor(m_background_color_str->c_str(), m_window.screenNumber());
     for (size_t workspace = 0; workspace < m_workspaces.size(); ++workspace) {
         m_workspaces[workspace]->setAlpha(*m_alpha);

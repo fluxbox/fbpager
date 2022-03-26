@@ -243,6 +243,8 @@ void FbWindow::updateTransparent(int the_x, int the_y, unsigned int the_width, u
     m_transparent->render(root_x + the_x, root_y + the_y,
                           the_x, the_y,
                           the_width, the_height);
+#else
+#warning "No XRender"
 #endif // HAVE_XRENDER
 }
 
