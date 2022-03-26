@@ -1,19 +1,20 @@
-AC_INIT(src/main.cc)
-AC_PREREQ(2.52)
-AM_INIT_AUTOMAKE(fbpager,0.1.5,no-define)
+AC_INIT([fbpager],[0.1.6])
+AC_CONFIG_SRCDIR([src/main.cc])
+AC_PREREQ([2.69])
+AM_INIT_AUTOMAKE
 
 
-AC_LANG_CPLUSPLUS
+AC_LANG([C++])
  
 dnl Locate required external software
 AC_PROG_CC
 AC_PROG_CXX
 AC_PROG_INSTALL
-AM_PROG_LIBTOOL
+LT_INIT
 
 
 dnl Check for system header files
-AC_HEADER_STDC
+# AC_HEADER_STDC
 AC_CHECK_HEADERS(fcntl.h signal.h sys/select.h sys/signal.h sys/stat.h sys/time.h sys/types.h sys/wait.h)
 
 AC_CHECK_HEADERS(sstream, ,
@@ -22,9 +23,11 @@ AC_CHECK_HEADERS(sstream, ,
         )]
 )
 
-AC_HEADER_TIME
+# AC_HEADER_TIME
 dnl Determine the return type of signal handlers
-AC_TYPE_SIGNAL
+AC_DEFINE_UNQUOTED([RETSIGTYPE],[$ac_cv_type_signal],[Define as the return type of signal handlers
+		    (`int' or `void').])
+
 
 AC_CHECK_FUNCS(sigaction strcasestr)
 
@@ -100,9 +103,9 @@ AC_MSG_RESULT([])
 dnl Output files
 AM_CONFIG_HEADER(config.h)
 
-AC_OUTPUT(
-Makefile
+AC_CONFIG_FILES([Makefile
 version.h
 src/Makefile
 src/FbTk/Makefile
-)
+])
+AC_OUTPUT
