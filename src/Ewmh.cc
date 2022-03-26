@@ -271,7 +271,7 @@ void Ewmh::setHints(FbTk::FbWindow &win, WindowHint &hint) {
     }
 
     if (hint.flags() & WindowHint::WHINT_TYPE_DOCK) {
-        cerr << "Setting type dock." << endl;
+//        cerr << "Setting type dock." << endl;
         Atom data = m_data->type_dock;
         win.changeProperty(m_data->wm_type,
                            XA_ATOM,
@@ -291,10 +291,10 @@ void Ewmh::setHints(FbTk::FbWindow &win, WindowHint &hint) {
         states.push_back(m_data->state_hidden);
     if (hint.flags() & WindowHint::WHINT_LAYER_TOP){
         states.push_back(m_data->state_above);
-        cerr << "Setting state above." << endl;
+//        cerr << "Setting state above." << endl;
     }
     if (hint.flags() & WindowHint::WHINT_LAYER_BOTTOM) {
-        cerr<< "Setting state bottom." << endl;
+//        cerr<< "Setting state bottom." << endl;
         states.push_back(m_data->state_below);
     }
 
