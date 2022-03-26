@@ -49,7 +49,7 @@ public:
     bool propertyNotify( Pager &pager, XPropertyEvent &event);
 private:
     bool m_support;
-    std::auto_ptr<Ewmh_priv> m_data;
+    std::unique_ptr<Ewmh_priv> m_data;
 };
 
 } // end namespace FbPager

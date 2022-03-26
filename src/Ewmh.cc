@@ -53,7 +53,7 @@ struct PropT {
 };
 
 
-typedef std::auto_ptr<PropT> PropTPtr;
+typedef std::unique_ptr<PropT> PropTPtr;
 
 PropT *property(const FbTk::FbWindow &win, Atom atom,
                 Atom type, unsigned int num) {
@@ -316,7 +316,7 @@ void Ewmh::getHints(const FbTk::FbWindow &win, WindowHint &hint) const {
     if (p.get() != 0 && p->data != 0) {
 
         Atom *states = (Atom *)(p->data);
-        for (int i=0; i<p->num; ++i) {
+        for (unsigned int i=0; i<p->num; ++i) {
             if (states[i] == m_data->state_skip_pager)
                 hint.add(WindowHint::WHINT_SKIP_PAGER);
             else if (states[i] == m_data->state_skip_taskbar)

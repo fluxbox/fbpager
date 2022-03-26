@@ -39,16 +39,16 @@ void showVersion() {
 void showUsage(const char * const appname) {
     showVersion();
     cout<<"Usage: "<<endl
-        <<appname<<" <argument>"<<endl
+        <<appname<<" [argument(s)]"<<endl
         <<"Arguments: "<<endl
-        <<"  -display <displayname>"<<endl
-        <<"  -w              withdrawn state (i.e in the Slit)"<<endl
-        <<"  -rc <filename>  resource file (default: ~/.fluxbox/fbpager)"<<endl
-        <<"  -sr             show resources"<<endl
+        <<"  -display           <displayname>"<<endl
+        <<"  -w                 withdrawn state (i.e in the Slit)"<<endl
+        <<"  -rc <filename>     resource file (default: ~/.fluxbox/fbpager)"<<endl
+        <<"  -sr                show resources"<<endl
         <<"  -s <screen number> (default: 0)"<<endl
-        <<"  -v              show version"<<endl
-        <<"  -h              show this help"<<endl
-        <<"  -l <layer>       layer, values: top or bottom" << endl;
+        <<"  -v                 show version"<<endl
+        <<"  -h                 show this help"<<endl
+        <<"  -l <layer>         layer, [top|normal|bottom]" << endl;
 }
 
 int main(int argc, char **argv) {
