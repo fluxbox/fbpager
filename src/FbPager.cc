@@ -371,8 +371,8 @@ void FbPager::handleEvent(XEvent &event) {
         } else if (event.xconfigure.send_event == True){
             if (event.xconfigure.x != m_window.x() ||
                 event.xconfigure.y != m_window.y() ||
-                event.xconfigure.width != m_window.width() ||
-                event.xconfigure.height != m_window.height()) {
+                (unsigned int)event.xconfigure.width != m_window.width() ||
+                (unsigned int)event.xconfigure.height != m_window.height()) {
 
                 m_window.updateGeometry(event.xconfigure.x,
                                         event.xconfigure.y,
@@ -398,7 +398,7 @@ void FbPager::buttonPressEvent(XButtonEvent &event) {
     FB_ostringstream os;
 
     // double click
-    if (event.time - m_last_button_event.time < *m_multiclick_time &&
+    if (event.time - m_last_button_event.time < (Time)*m_multiclick_time &&
         event.button == m_last_button_event.button)
         os << event.button;
     else
@@ -411,8 +411,8 @@ void FbPager::buttonPressEvent(XButtonEvent &event) {
     m_last_button_event = event;
 
 
-    if (event.button == *m_move_in_workspace_button ||
-        event.button == *m_drag_to_workspace_button ) {
+    if ((int)event.button == *m_move_in_workspace_button ||
+        (int)event.button == *m_drag_to_workspace_button ) {
 
         m_move_window.curr_window = 0;
         m_move_window.client = ClientWindow(0);
@@ -428,7 +428,7 @@ void FbPager::buttonPressEvent(XButtonEvent &event) {
                 m_grab_y = event.y - win->y();
 
                 // drag -> move it above all workspaces
-                if (event.button == *m_drag_to_workspace_button) {
+                if ((int)event.button == *m_drag_to_workspace_button) {
                     m_move_window.curr_window->reparent(m_window,
                                                         m_move_window.curr_window->x() +
                                                         m_move_window.curr_workspace->window().x(),
@@ -446,7 +446,7 @@ void FbPager::buttonReleaseEvent(XButtonEvent &event) {
 
     ClientWindow client(0);
     if (m_move_window.curr_window != 0 &&
-        *m_move_in_workspace_button == event.button) {
+        *m_move_in_workspace_button == (int)event.button) {
 
         FbTk::FbWindow &win = *m_move_window.curr_window;
         int client_x = win.x(), client_y = win.y();
@@ -461,10 +461,10 @@ void FbPager::buttonReleaseEvent(XButtonEvent &event) {
 
     }
 
-    if (m_move_window.curr_window != 0 && *m_drag_to_workspace_button == event.button) {
+    if (m_move_window.curr_window != 0 && *m_drag_to_workspace_button == (int)event.button) {
 
         if (m_last_workspace_num >= 0 &&
-            m_last_workspace_num < m_workspaces.size()) {
+            m_last_workspace_num < (int)m_workspaces.size()) {
 
             Workspace* workspace = m_workspaces[m_last_workspace_num];
 
@@ -603,7 +603,7 @@ void FbPager::motionNotifyEvent(XMotionEvent &event) {
         int newy = event.y - m_grab_y;
 
         // just move in current workspace
-        if (m_last_button_event.button == *m_move_in_workspace_button) {
+        if ((int)m_last_button_event.button == *m_move_in_workspace_button) {
 
             respectConstraints(newx, newy, *m_move_window.curr_window, workspace->window());
             m_move_window.curr_window->move(newx, newy);
@@ -619,7 +619,7 @@ void FbPager::motionNotifyEvent(XMotionEvent &event) {
             }
 
         // drag between the workspaces
-        } else if (m_last_button_event.button == *m_drag_to_workspace_button) {
+        } else if ((int)m_last_button_event.button == *m_drag_to_workspace_button) {
 
             newx += m_move_window.curr_workspace->window().x();
             newy += m_move_window.curr_workspace->window().y();
@@ -628,7 +628,7 @@ void FbPager::motionNotifyEvent(XMotionEvent &event) {
 
             m_move_window.curr_window->move(newx, newy);
 
-            if (*m_follow_drag && m_last_workspace_num != old_workspace)
+            if (*m_follow_drag && m_last_workspace_num != (int)old_workspace)
                 sendChangeToWorkspace(m_last_workspace_num);
         }
     }
@@ -879,9 +879,9 @@ void FbPager::alignWorkspaces() {
             }
         }
 
-        if (next_pos_x + workspace_width > max_x)
+        if (next_pos_x + workspace_width > (unsigned int)max_x)
             max_x = next_pos_x + workspace_width;
-        if (next_pos_y + workspace_height > max_y)
+        if (next_pos_y + workspace_height > (unsigned int)max_y)
             max_y = next_pos_y + workspace_height;
 
         (*it)->window().move(next_pos_x, next_pos_y);
@@ -922,7 +922,7 @@ void FbPager::updateWindowHints(Window win) {
     for (; it != it_end; ++it)
         (*it)->getHints(client, hint);
 
-    for (int workspace = 0; workspace < m_workspaces.size(); workspace++) {
+    for (unsigned int workspace = 0; workspace < m_workspaces.size(); workspace++) {
         if (m_workspaces[workspace]->find(win) == 0) {
             // if the window is sticky then add it to this workspace too
             // and if it's not skip_pager nor type_dock
@@ -933,8 +933,8 @@ void FbPager::updateWindowHints(Window win) {
             } else
                 continue; // normal window without sticky
 
-        } else if (!(hint.flags() & WindowHint::WHINT_STICKY) &&
-                   hint.workspace() != workspace ||
+        } else if ((!(hint.flags() & WindowHint::WHINT_STICKY) &&
+                   (unsigned int)hint.workspace() != workspace) ||
                    (hint.flags() & WindowHint::WHINT_SKIP_PAGER) ||
                    (hint.flags() & WindowHint::WHINT_TYPE_DOCK)) {
             // if win not sticky and if it's not suppose to be on this

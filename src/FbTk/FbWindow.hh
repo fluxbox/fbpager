@@ -205,7 +205,7 @@ private:
     unsigned int m_border_width; ///< border size
     int m_depth; ///< bit depth
     bool m_destroy; ///< wheter the x window was created before
-    std::auto_ptr<FbTk::Transparent> m_transparent;
+    std::unique_ptr<FbTk::Transparent> m_transparent;
     Pixmap m_buffer_pm;
 };
 
