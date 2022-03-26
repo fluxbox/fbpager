@@ -240,13 +240,16 @@ bool Ewmh::clientMessage(Pager &pager, XClientMessageEvent &event) {
 void Ewmh::changeWorkspace(int screen_num, int workspace) {
     Display *disp = FbTk::App::instance()->display();
     XEvent event;
+    Status stat;
     event.xclient.display = disp;
     event.xclient.type = ClientMessage;
     event.xclient.window = RootWindow(disp, screen_num);
     event.xclient.message_type = m_data->current_desktop;
     event.xclient.format = 32;
     event.xclient.data.l[0] = workspace;
-    XSendEvent(disp, event.xclient.window, False, SubstructureNotifyMask, &event);
+    stat = XSendEvent(disp, event.xclient.window, False, SubstructureNotifyMask, &event);
+    if (stat != 1)
+        std::cerr << "XSendEvent() returned " << stat << std::endl;
 }
 
 void Ewmh::setHints(FbTk::FbWindow &win, WindowHint &hint) {

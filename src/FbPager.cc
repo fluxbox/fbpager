@@ -187,7 +187,7 @@ FbPager::FbPager(int screen_num, bool withdraw,
                                "FbPager.MoveInWorkspaceButton"),
     m_drag_to_workspace_button(m_resmanager, 3,
                                "fbpager.dragToWorkspaceButton",
-                               "FbPager.DragToWorkspaceButtton"),
+                               "FbPager.DragToWorkspaceButton"),
     m_align(m_resmanager, LEFT_TO_RIGHT,
             "fbpager.align",
             "FbPager.Align"),
@@ -575,7 +575,7 @@ void FbPager::motionNotifyEvent(XMotionEvent &event) {
 
         Workspace* workspace= 0;
         size_t w = 0;
-        size_t old_workspace= m_last_workspace_num;
+        int old_workspace = m_last_workspace_num;
         int left, top, right, bottom, x, y;
 
         // find out, on which workspace the motion started and
@@ -599,6 +599,7 @@ void FbPager::motionNotifyEvent(XMotionEvent &event) {
                 m_last_workspace_num= w;
         }
 
+        if (old_workspace == -1) old_workspace = m_last_workspace_num;
         int newx = event.x - m_grab_x;
         int newy = event.y - m_grab_y;
 
@@ -628,8 +629,12 @@ void FbPager::motionNotifyEvent(XMotionEvent &event) {
 
             m_move_window.curr_window->move(newx, newy);
 
-            if (*m_follow_drag && m_last_workspace_num != (int)old_workspace)
-                sendChangeToWorkspace(m_last_workspace_num);
+            if (*m_follow_drag) {
+                // TODO follow dragging
+                if (m_last_workspace_num != old_workspace) {
+                    sendChangeToWorkspace(m_last_workspace_num);
+                }
+            }
         }
     }
 }
