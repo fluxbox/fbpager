@@ -8,6 +8,7 @@ config.status
 stamp-h1
 version.h
 Makefile
+libtool
 .deps
 src/.deps
 src/fbpager
