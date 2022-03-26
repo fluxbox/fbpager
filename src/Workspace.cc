@@ -144,7 +144,7 @@ void Workspace::iconifyWindow(Window win) {
 
 void Workspace::deiconifyWindow(Window win) {
     FbTk::FbWindow *fbwin = find(win);
-    if (fbwin != 0)
+    if (fbwin == 0)
         return;
     fbwin->show();
 }
