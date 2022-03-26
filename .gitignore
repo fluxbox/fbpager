@@ -1,0 +1,13 @@
+*~
+*.a
+*.o
+autom4te.cache
+config.h
+config.log
+config.status
+stamp-h1
+version.h
+Makefile
+.deps
+src/.deps
+src/fbpager
