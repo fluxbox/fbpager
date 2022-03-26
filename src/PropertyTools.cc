@@ -14,7 +14,7 @@ std::string getAtomName(Atom atom) {
 }
 
 
-unsigned int getIntProperty(Window win, Atom atom) throw (PropertyException){
+unsigned int getIntProperty(Window win, Atom atom) {
     Atom ret_type = 0;
     int fmt = 0;
     unsigned long nitems = 0, bytes_after = 0;
@@ -31,7 +31,7 @@ unsigned int getIntProperty(Window win, Atom atom) throw (PropertyException){
     return val;
 }
 
-Window getWinProperty(Window win, Atom atom) throw (PropertyException){
+Window getWinProperty(Window win, Atom atom) {
     Atom ret_type = 0;
     int fmt = 0;
     unsigned long nitems = 0, bytes_after = 0;
@@ -48,8 +48,7 @@ Window getWinProperty(Window win, Atom atom) throw (PropertyException){
     return val;
 }
 
-void getWinArrayProperty(Window win, Atom atom, std::vector<Window> &cont)
-    throw (PropertyException) {
+void getWinArrayProperty(Window win, Atom atom, std::vector<Window> &cont) {
     Atom ret_type = 0;
     int fmt = 0;
     unsigned long nitems = 0, bytes_after = 0;
