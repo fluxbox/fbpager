@@ -318,7 +318,10 @@ void Workspace::updateGeometry(Window win) {
         h = 1;
 
     fbwin->moveResize(x, y, w, h);
-    updateBackground(win, m_window_color);
+    if (m_focused_window == fbwin)
+        updateBackground(win, m_focused_window_color);
+    else
+        fbwin->setBackgroundColor(m_window_color);
 }
 
 void Workspace::updateBackground(Window win, const FbTk::Color &bg_color) {
