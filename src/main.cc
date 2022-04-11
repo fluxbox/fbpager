@@ -51,7 +51,7 @@ void showUsage(const char * const appname) {
         <<"  -l <layer>         layer, [top|normal|bottom]" << endl;
 }
 
-int main(int argc, char **argv) {
+int main(const int argc, const char **argv) {
     int screen_num = 0;
     std::string displayname;
     bool withdraw = false;

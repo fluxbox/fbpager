@@ -272,12 +272,12 @@ void Ewmh::setHints(FbTk::FbWindow &win, WindowHint &hint) {
 
     if (hint.flags() & WindowHint::WHINT_TYPE_DOCK) {
 //        cerr << "Setting type dock." << endl;
-        Atom data = m_data->type_dock;
+        Atom dock = m_data->type_dock;
         win.changeProperty(m_data->wm_type,
                            XA_ATOM,
                            32,
                            PropModeReplace,
-                           (unsigned char *)&data, 1);
+                           (unsigned char *)&dock, 1);
     }
 
     std::vector<Atom> states;

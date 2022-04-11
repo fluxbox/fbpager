@@ -57,7 +57,7 @@ public:
 	
 private:
     void free();
-    void copy(const Color &col);
+    void copy(const Color &col_copy);
     void allocate(unsigned short red, unsigned short green, 
                   unsigned short blue, int screen);
     inline void setAllocated(bool a) { m_allocated = a; }

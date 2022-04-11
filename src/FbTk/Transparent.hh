@@ -31,12 +31,12 @@ namespace FbTk {
 /// renders to drawable together with an alpha mask
 class Transparent {
 public:
-    Transparent(Drawable source, Drawable dest, unsigned char alpha, int screen_num);
+    Transparent(Drawable src, Drawable dest, unsigned char alpha, int screen_num);
     ~Transparent();
     /// sets alpha value
     void setAlpha(unsigned char alpha);
     /// sets source drawable
-    void setSource(Drawable src, int screen_num);
+    void setSource(Drawable source, int screen_num);
     /// sets destination drawable
     void setDest(Drawable dest, int screen_num);
     /**
@@ -52,7 +52,7 @@ public:
 
 private:
     void freeAlpha();
-    void allocAlpha(unsigned char newval);
+    void allocAlpha(unsigned char alpha);
     unsigned long m_alpha_pic;
     unsigned long m_src_pic;
     unsigned long m_dest_pic;

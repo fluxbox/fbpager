@@ -47,7 +47,7 @@ public:
     virtual ~App();
     /// display connection
     inline Display *display() const { return m_display; }
-    void sync(bool discard);
+    void sync(bool discard) const;
     /// starts event loop
     virtual void eventLoop();
     /// forces an end to event loop
@@ -56,7 +56,7 @@ public:
 private:
     static App *s_app;
     bool m_done;
-    Display *m_display;
+    Display *m_display = 0;
 };
 
 } // end namespace FbTk
