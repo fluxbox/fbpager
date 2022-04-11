@@ -226,9 +226,9 @@ void FbPixmap::scale(unsigned int dest_width, unsigned int dest_height) {
     float zoom_y = static_cast<float>(height())/static_cast<float>(dest_height);
 
     // start scaling
-    float src_x = 0, src_y = 0;
+    float src_x = 0;
     for (int tx=0; tx < static_cast<signed>(dest_width); ++tx, src_x += zoom_x) {
-        src_y = 0;
+        float src_y = 0;
         for (int ty=0; ty < static_cast<signed>(dest_height); ++ty, src_y += zoom_y) {	
             gc.setForeground(XGetPixel(src_image,
                                        static_cast<int>(src_x),

@@ -576,11 +576,11 @@ void FbPager::motionNotifyEvent(XMotionEvent &event) {
         Workspace* workspace= 0;
         size_t w = 0;
         int old_workspace = m_last_workspace_num;
-        int left, top, right, bottom, x, y;
 
         // find out, on which workspace the motion started and
         // on which workspace we are now
         for(; w < m_workspaces.size(); ++w) {
+            int left, top, right, bottom, x, y;
 
             if (m_workspaces[w]->window() == event.window)
                 workspace= m_workspaces[w];

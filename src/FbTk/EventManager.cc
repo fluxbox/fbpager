@@ -37,8 +37,9 @@ EventManager *EventManager::instance() {
 
 EventManager::~EventManager() {
     m_eventhandlers.clear();
-    if (m_eventhandlers.size() != 0)
+/*    if (m_eventhandlers.size() != 0)
         cerr << "FbTk::EventManager: Warning: unregistered eventhandlers! " << m_eventhandlers.size() << endl;
+*/
 }
 
 void EventManager::handleEvent(XEvent &ev) {
@@ -58,7 +59,7 @@ void EventManager::remove(const FbWindow &win) {
     unregisterEventHandler(win.window());
 }
 
-Window EventManager::getEventWindow(XEvent &ev) {
+Window EventManager::getEventWindow(const XEvent &ev) {
     // we only have cases for events that differ from xany
     switch (ev.type) {
     case CreateNotify:

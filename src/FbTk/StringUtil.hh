@@ -52,7 +52,7 @@ std::string toUpper(const std::string &conv);
 #ifdef basename
 #undef basename
 #endif // basename
-std::string basename(const std::string &basename);
+std::string basename(const std::string &filename);
 
 
 /// removes the first whitespace characters of the string

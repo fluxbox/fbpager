@@ -37,7 +37,7 @@ public:
 	
     void handleEvent(XEvent &ev);
     // adds a parent to listen to the childrens events
-    void addParent(EventHandler &ev, const FbWindow &parent);
+    void addParent(EventHandler &ev, const FbWindow &win);
     void add(EventHandler &ev, const FbWindow &win);
     void remove(const FbWindow &win);
     void add(EventHandler &ev, Window win) { registerEventHandler(ev, win); }
@@ -45,14 +45,14 @@ public:
 
     // Some events have the parent window as the xany.window
     // This function always returns the actual window member of the event structure
-    static Window getEventWindow(XEvent &ev);
+    static Window getEventWindow(const XEvent &ev);
 
     void registerEventHandler(EventHandler &ev, Window win);
     void unregisterEventHandler(Window win);
 private:
     EventManager() { }
     ~EventManager();
-    void dispatch(Window win, XEvent &event, bool parent = false);
+    void dispatch(Window win, XEvent &ev, bool parent = false);
     std::map<Window, EventHandler *> m_eventhandlers;
     std::map<Window, EventHandler *> m_parent;
 };

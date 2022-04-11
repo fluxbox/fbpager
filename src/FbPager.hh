@@ -48,7 +48,7 @@ public:
     enum Alignment { LEFT_TO_RIGHT, TOP_TO_BOTTOM};
     FbPager(int screen_num, bool withdraw,
             bool show_resources,
-            int layer_flags,
+            int layer_flag,
             const char *resource_filename=0);
     ~FbPager();
     void hide();
@@ -60,25 +60,25 @@ public:
       @name event handlers
      */
     //@{
-    void handleEvent(XEvent &event);
-    void buttonPressEvent(XButtonEvent &event);
-    void buttonReleaseEvent(XButtonEvent &event);
-    void motionNotifyEvent(XMotionEvent &event);
-    void exposeEvent(XExposeEvent &event);
+    void handleEvent(XEvent &event) override;
+    void buttonPressEvent(XButtonEvent &event) override;
+    void buttonReleaseEvent(XButtonEvent &event) override;
+    void motionNotifyEvent(XMotionEvent &event) override;
+    void exposeEvent(XExposeEvent &event) override;
     //@}
 
     /// add a window to workspace
-    void addWindow(Window win, unsigned int workspace_num);
-    void moveToWorkspace(Window win, unsigned int workspace_num);
-    void setFocusedWindow(Window win);
+    void addWindow(Window win, unsigned int workspace_num) override;
+    void moveToWorkspace(Window win, unsigned int w) override;
+    void setFocusedWindow(Window win) override;
     /// remove a window from workspace
-    void removeWindow(Window win);
-    void raiseWindow(Window win);
-    void lowerWindow(Window win);
+    void removeWindow(Window win) override;
+    void raiseWindow(Window win) override;
+    void lowerWindow(Window win) override;
     /// update number of workspaces
-    void updateWorkspaceCount(unsigned int num);
-    void setCurrentWorkspace(unsigned int num);
-    bool haveWindow(Window win) {
+    void updateWorkspaceCount(unsigned int num) override;
+    void setCurrentWorkspace(unsigned int num) override;
+    bool haveWindow(Window win) override {
         if (m_windows.find(win) == m_windows.end())
             return false;
         return true;
@@ -86,7 +86,7 @@ public:
 
     void eraseAllWindows();
 
-    void addWindows(const WindowsAndWorkspaces& windows);
+    void addWindows(const WindowsAndWorkspaces& wins);
 
 private:
     void clientMessageEvent(XClientMessageEvent &event);
