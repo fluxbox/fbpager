@@ -50,11 +50,11 @@ class FbWindow: public FbDrawable {
 public:
     FbWindow();
 
-    FbWindow(const FbWindow &win_copy);
+    FbWindow(const FbWindow &the_copy);
 
     FbWindow(int screen_num,
              int x, int y, unsigned int width, unsigned int height, long eventmask, 
-             bool overrride_redirect = false,
+             bool override_redirect = false,
              int depth = CopyFromParent, 
              int class_type = InputOutput);
 
@@ -62,7 +62,7 @@ public:
              int x, int y, 
              unsigned int width, unsigned int height, 
              long eventmask, 
-             bool overrride_redirect = false,
+             bool override_redirect = false,
              int depth = CopyFromParent, 
              int class_type = InputOutput);
 
@@ -80,7 +80,7 @@ public:
     virtual void clearArea(int x, int y, 
                            unsigned int width, unsigned int height, 
                            bool exposures = false);
-    void updateTransparent(int x = -1, int y = -1, unsigned int width = 0, unsigned int height = 0);
+    void updateTransparent(int the_x = -1, int the_y = -1, unsigned int the_width = 0, unsigned int the_height = 0);
 
     void setAlpha(unsigned char alpha);
 
@@ -132,7 +132,7 @@ public:
     void changeProperty(Atom property, Atom type,
                         int format,
                         int mode,
-                        unsigned char *data,
+                        const unsigned char *data,
                         int nelements);
 
     inline void sendEvent(bool propagate,
@@ -149,11 +149,11 @@ public:
     /// @return real X window
     inline Window window() const { return m_window; }
     /// @return drawable (the X window)
-    inline Drawable drawable() const { return window(); }
+    inline Drawable drawable() const override { return window(); }
     inline int x() const { return m_x; }
     inline int y() const { return m_y; }
-    inline unsigned int width() const { return m_width; }
-    inline unsigned int height() const { return m_height; }
+    inline unsigned int width() const override { return m_width; }
+    inline unsigned int height() const override { return m_height; }
     inline unsigned int borderWidth() const { return m_border_width; }
     inline int depth() const { return m_depth; }
     unsigned char alpha() const;

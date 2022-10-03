@@ -381,12 +381,12 @@ bool FbWindow::property(Atom property,
 void FbWindow::changeProperty(Atom property, Atom type,
                               int format,
                               int mode,
-                              unsigned char *data,
+                              const unsigned char *data,
                               int nelements) {
     
     XChangeProperty(s_display, m_window, property, type,
                     format, mode, 
-                    data, nelements);
+                    (unsigned char*)data, nelements);
 }
 
 int FbWindow::screenNumber() const {

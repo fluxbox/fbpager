@@ -55,14 +55,14 @@ App::~App() {
     s_app = 0;
 }
 
-void App::sync(bool discard) {
-    XSync(display(), discard);
+void App::sync(bool discard) const {
+    XSync(m_display, discard);
 }
 
 void App::eventLoop() {
     XEvent ev;
     while (!m_done) {
-        XNextEvent(display(), &ev);
+        XNextEvent(m_display, &ev);
         EventManager::instance()->handleEvent(ev);
     }
 }

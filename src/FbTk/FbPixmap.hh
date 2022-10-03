@@ -35,7 +35,7 @@ class FbPixmap:public FbDrawable {
 public:    
     FbPixmap();
     /// copy pixmap 
-    explicit FbPixmap(const FbPixmap &copy);
+    explicit FbPixmap(const FbPixmap &the_copy);
     /// creates a FbPixmap from X pixmap
     explicit FbPixmap(Pixmap pm);
     FbPixmap(const FbDrawable &src, 
@@ -48,22 +48,22 @@ public:
     virtual ~FbPixmap();
 
     void copy(const FbPixmap &the_copy);
-    void copy(Pixmap pixmap);
+    void copy(Pixmap pm);
     /// rotates the pixmap 90 deg, not implemented!
     void rotate();
     /// scales the pixmap to specified size
-    void scale(unsigned int width, unsigned int height);
+    void scale(unsigned int dest_width, unsigned int dest_height);
     void resize(unsigned int width, unsigned int height);
     /// drops pixmap and returns it
     Pixmap release();
 
-    FbPixmap &operator = (const FbPixmap &copy);
+    FbPixmap &operator = (const FbPixmap &the_copy);
     /// sets new pixmap
     FbPixmap &operator = (Pixmap pm);
 
-    inline Drawable drawable() const { return m_pm; }
-    inline unsigned int width() const { return m_width; }
-    inline unsigned int height() const { return m_height; }
+    inline Drawable drawable() const override { return m_pm; }
+    inline unsigned int width() const override { return m_width; }
+    inline unsigned int height() const override { return m_height; }
     inline int depth() const { return m_depth; }
 
 

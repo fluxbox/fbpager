@@ -62,7 +62,7 @@ public:
     }
 
     /// not implemented
-    inline void setFont(const FbTk::Font &) {}
+    static inline void setFont(const FbTk::Font &) {}
 
     /// set font id
     inline void setFont(int fid) {
