@@ -688,7 +688,7 @@ void FbPager::propertyEvent(XPropertyEvent &event) {
 
 void FbPager::eraseAllWindows() {
     for_each(m_workspaces.begin(), m_workspaces.end(),
-             mem_fun(&Workspace::removeAll));
+             mem_fn(&Workspace::removeAll));
     WindowList::iterator it = m_windows.begin();
     for (; it != m_windows.end(); ++it) {
         FbTk::EventManager::instance()->remove(*it);
@@ -737,13 +737,13 @@ void FbPager::setFocusedWindow(Window win) {
     Workspace::setFocusedWindow(win);
     for_each(m_workspaces.begin(),
              m_workspaces.end(),
-             mem_fun(&Workspace::updateFocusedWindow));
+             mem_fn(&Workspace::updateFocusedWindow));
 }
 
 void FbPager::removeWindow(Window win) {
     for_each(m_workspaces.begin(),
              m_workspaces.end(),
-             bind2nd(mem_fun(&Workspace::remove), win));
+             bind(mem_fn(&Workspace::remove), placeholders::_1, win));
     FbTk::EventManager::instance()->remove(win);
     m_windows.erase(win);
 }
@@ -969,14 +969,14 @@ void FbPager::raiseWindow(Window win) {
     // raise on all workspace
     for_each(m_workspaces.begin(),
              m_workspaces.end(),
-             bind2nd(mem_fun(&Workspace::raiseWindow), win));
+             bind(mem_fn(&Workspace::raiseWindow), placeholders::_1, win));
 }
 
 void FbPager::lowerWindow(Window win) {
     // lower on all workspace
     for_each(m_workspaces.begin(),
              m_workspaces.end(),
-             bind2nd(mem_fun(&Workspace::lowerWindow), win));
+             bind(mem_fn(&Workspace::lowerWindow), placeholders::_1, win));
 }
 
 void FbPager::load(const std::string &filename) {
@@ -1000,7 +1000,7 @@ void FbPager::clearWindows() {
     m_window.clear();
     for_each(m_workspaces.begin(),
              m_workspaces.end(),
-             mem_fun(&Workspace::clearWindows));
+             mem_fn(&Workspace::clearWindows));
 }
 
 } // end namespace FbPager
