@@ -84,9 +84,9 @@ public:
 
     void setAlpha(unsigned char alpha);
 
-    virtual FbWindow &operator = (const FbWindow &win);
+    /*virtual */ FbWindow &operator = (const FbWindow &win);
     /// assign a new X window to this
-    virtual FbWindow &operator = (Window win);    
+    /*virtual */ FbWindow &operator = (Window win);
     virtual void hide();
     virtual void show();
     virtual void showSubwindows();

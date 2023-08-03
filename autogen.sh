@@ -12,11 +12,11 @@ dothis() {
     fi
 }
 
-libtoolize --copy --force --automake
-rm -f config.cache
+dothis libtoolize --copy --force --automake
+rm -vf config.cache
 dothis aclocal -I . ${ACLOCAL_FLAGS}
 dothis autoheader
-dothis automake --warnings=none -a
+dothis automake -a # --warnings=none
 dothis autoconf
 
 echo 'Success, now continue with ./configure'
