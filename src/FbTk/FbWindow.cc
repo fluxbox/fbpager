@@ -55,7 +55,7 @@ Pixmap getRootPixmap(int screen_num) {
                            false, XA_PIXMAP, &real_type,
                            &real_format, &items_read, &items_left, 
                            (unsigned char **) &data) == Success && 
-        items_read) { 
+        items_read && data) { 
         root_pm = (Pixmap) (*data);                  
         XFree(data);
     }
@@ -146,6 +146,7 @@ FbWindow::~FbWindow() {
 
 
 void FbWindow::setBackgroundColor(const FbTk::Color &bg_color) {
+    XSync(s_display, False);
     XSetWindowBackground(s_display, m_window, bg_color.pixel());
 }
 
@@ -202,7 +203,7 @@ void FbWindow::updateTransparent(int the_x, int the_y, unsigned int the_width, u
 
     // update source and destination if needed
     Pixmap root = getRootPixmap(screenNumber());
-    if (m_transparent->source() != root)
+    if (root && m_transparent->source() != root)
         m_transparent->setSource(root, screenNumber());
 
     if (m_buffer_pm) {
@@ -243,13 +244,19 @@ void FbWindow::updateTransparent(int the_x, int the_y, unsigned int the_width, u
     m_transparent->render(root_x + the_x, root_y + the_y,
                           the_x, the_y,
                           the_width, the_height);
+#else
+#warning "No XRender"
 #endif // HAVE_XRENDER
 }
 
 void FbWindow::setAlpha(unsigned char alpha) {
 #ifdef HAVE_XRENDER
     if (m_transparent.get() == 0 && alpha != 0) {
-        m_transparent.reset(new Transparent(getRootPixmap(screenNumber()), window(), alpha, screenNumber()));
+        Pixmap root = getRootPixmap(screenNumber());
+        if (root)
+            m_transparent.reset(new Transparent(root, window(), alpha, screenNumber()));
+        else
+            m_transparent.reset(0); // destroy transparent object
     } else if (alpha != 0 && alpha != m_transparent->alpha())
         m_transparent->setAlpha(alpha);
     else if (alpha == 0)
@@ -366,7 +373,7 @@ bool FbWindow::property(Atom property,
                            property, long_offset, long_length, do_delete, 
                            req_type, actual_type_return,
                            actual_format_return, nitems_return,
-                           bytes_after_return, prop_return) == Success)
+                           bytes_after_return, prop_return) == Success && *prop_return)
         return true;
 
     return false;
@@ -375,12 +382,12 @@ bool FbWindow::property(Atom property,
 void FbWindow::changeProperty(Atom property, Atom type,
                               int format,
                               int mode,
-                              unsigned char *data,
+                              const unsigned char *data,
                               int nelements) {
     
     XChangeProperty(s_display, m_window, property, type,
                     format, mode, 
-                    data, nelements);
+                    (unsigned char*)data, nelements);
 }
 
 int FbWindow::screenNumber() const {

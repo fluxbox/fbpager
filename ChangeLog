@@ -1,5 +1,12 @@
 * format ( year-month-day)
 ----- Version 0.1.6
+* 2020-03-26:
+  * Updated autotools
+  * Fixed all warnings to C++/17 standard
+  * Fixed memory leak when reading std::map by element
+  * Fixed NULL pointer segfault
+  * Fixed overlapping window raise issue
+  * Updated docs, added man page
 * 2008-10-16:
   * Fixed so Extended Window Manager Hints actually work.
 ---- Version 0.1.5

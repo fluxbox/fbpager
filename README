@@ -1,3 +1,7 @@
+fbpager is a pager application for Fluxbox, giving you an overview of the window
+arrangement covering your various desktops. it is very configurable and can be
+made to fit your needs -- most probably.
+
 Author:
 Henrik Kinnunen (fluxgen at fluxbox dot org)
 
@@ -5,16 +9,17 @@ Contributors:
 Many thanks to Mathias Gumz (gumz at cs dot uni-magdeburg dot de)
 for adding mouse gestures, bug fixing and other patches.
 
-Usage: 
-./fbpager <argument>
-Arguments: 
-  -display <displayname>
-  -w              withdrawn state (i.e in the Slit)
-  -rc <filename>  resource file (default: ~/.fluxbox/fbpager)
-  -sr             show resources
+Usage:
+./fbpager [argument(s)]
+Arguments:
+  -display           <displayname>
+  -w                 withdrawn state (i.e in the Slit)
+  -rc <filename>     resource file (default: ~/.fluxbox/fbpager)
+  -sr                show resources
   -s <screen number> (default: 0)
-  -v              show version
-  -h              show this help
+  -v                 show version
+  -h                 show this help
+  -l <layer>         layer, [top|normal|bottom]
 
 Default resource file:
 ~/.fluxbox/fbpager
@@ -27,17 +32,19 @@ fbpager.y: 0
 fbpager.workspace.width: 64
 fbpager.workspace.height: 64
 fbpager.workspacesPerRow: 6400
+fbpager.layer: normal
 fbpager.followDrag: false
 fbpager.followMove: false
-fbpager.changeWorkspaceButton: 11
+fbpager.followScale: height
+fbpager.changeWorkspaceButton: 1
 fbpager.raiseWindowButton: 2
 fbpager.lowerWindowButton: 3
 fbpager.closeWindowButton: 3 3 1
 fbpager.exitButton: 1 3 3
 fbpager.nextWorkspaceButton: 4
 fbpager.prevWorkspaceButton: 5
-fbpager.moveInWorkspaceButton: 1
-fbpager.dragToWorkspaceButton: 2
+fbpager.moveInWorkspaceButton: 2
+fbpager.dragToWorkspaceButton: 3
 fbpager.align: LeftToRight
 fbpager.color: white
 fbpager.windowColor: white
@@ -48,7 +55,10 @@ fbpager.currentBackgroundColor: lightgray
 fbpager.multiClickTime: 250
 fbpager.icons: false
 fbpager.windowBorderWidth: 1
-fbpager.layer: 0
+fbpager.workspace.border.active.width: 1
+fbpager.workspace.border.inactive.width: 1
+fbpager.border.active.color: darkgreen
+fbpager.border.inactive.color: white
 
 Most of the resources should be self-explanatory, but some are explained
 in the notes section below.
@@ -59,10 +69,10 @@ You can do mouse gestures with the button bindings.
 
 To exit fbpager you click button 1 and then button 3 two times
 
-fbpager.workspacesPerRow, this should be a big number if you 
+fbpager.workspacesPerRow, this should be a big number if you
 dont want it to change row.
 
-fbpager.next/prevWorkspace is default to scroll up/down with 
+fbpager.next/prevWorkspace is default to scroll up/down with
 the mouse wheel
 
 Multipleclicks are represented by  a repetition of the button
@@ -74,7 +84,7 @@ fbpager.multiClickTime: int (default 250(ms))
 
 The time between each buttonpress must lay under 1 second,
 if its bigger, the button queue gets flushed
- 
+
 Homepage:
 http://fluxbox.org/fbpager/
 

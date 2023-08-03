@@ -70,9 +70,9 @@ Workspace::~Workspace() {
     WindowList::iterator it = m_windowlist.begin();
     WindowList::iterator it_end = m_windowlist.end();
     for (; it != it_end; ++it) {
-        FbTk::EventManager::instance()->remove(*(*it).second);
-        FbTk::EventManager::instance()->remove((*it).first);
-        delete (*it).second;
+        FbTk::EventManager::instance()->remove(*it->second);
+        FbTk::EventManager::instance()->remove(it->first);
+        delete it->second;
     }
 
     FbTk::EventManager::instance()->remove(m_window);
@@ -108,8 +108,7 @@ void Workspace::add(Window win) {
     fbwin->show();
     fbwin->setBorderWidth(m_window_border_width);
     fbwin->setBorderColor(m_window_bordercolor);
-
-    updateBackground(win, m_window_color);
+    fbwin->setBackgroundColor(m_window_color);
 }
 
 void Workspace::resize(unsigned int width, unsigned int height) {
@@ -117,7 +116,7 @@ void Workspace::resize(unsigned int width, unsigned int height) {
     WindowList::iterator it = m_windowlist.begin();
     WindowList::iterator it_end = m_windowlist.end();
     for (; it != it_end; ++it) {
-        updateGeometry((*it).first);
+        updateGeometry(it->first);
     }
 }
 
@@ -144,7 +143,7 @@ void Workspace::iconifyWindow(Window win) {
 
 void Workspace::deiconifyWindow(Window win) {
     FbTk::FbWindow *fbwin = find(win);
-    if (fbwin != 0)
+    if (fbwin == 0)
         return;
     fbwin->show();
 }
@@ -173,8 +172,8 @@ void Workspace::setWindowColor(const std::string &focused,
     WindowList::iterator it = m_windowlist.begin();
     WindowList::iterator it_end = m_windowlist.end();
     for (; it != it_end; ++it) {
-        (*it).second->setBorderColor(m_window_bordercolor);
-        updateBackground((*it).first, m_window_color);
+        it->second->setBorderColor(m_window_bordercolor);
+        it->second->setBackgroundColor(m_window_color);
     }
     updateFocusedWindow();
 }
@@ -185,7 +184,7 @@ void Workspace::setAlpha(unsigned char alpha) {
     WindowList::iterator it = m_windowlist.begin();
     WindowList::iterator it_end = m_windowlist.end();
     for (; it != it_end; ++it) {
-        (*it).second->setAlpha(alpha);
+        it->second->setAlpha(alpha);
     }
 }
 
@@ -194,10 +193,8 @@ void Workspace::clearWindows() {
     WindowList::iterator it = m_windowlist.begin();
     WindowList::iterator it_end = m_windowlist.end();
     for (; it != it_end; ++it) {
-        if (m_use_pixmap) {
-            updateBackground((*it).first,m_window_color);
-        }
-        (*it).second->clear();
+        it->second->setBackgroundColor(m_window_color);
+        it->second->clear();
     }
 }
 
@@ -232,8 +229,8 @@ ClientWindow Workspace::findClient(const FbTk::FbWindow &win) const {
     WindowList::const_iterator it = m_windowlist.begin();
     WindowList::const_iterator it_end = m_windowlist.end();
     for (; it != it_end; ++it) {
-        if (*(*it).second == win)
-            return ClientWindow((*it).first);
+        if (*it->second == win)
+            return ClientWindow(it->first);
     }
     return ClientWindow(0);
 }
@@ -242,8 +239,8 @@ FbTk::FbWindow *Workspace::find(Window win) {
     WindowList::iterator it = m_windowlist.begin();
     WindowList::iterator it_end = m_windowlist.end();
     for (; it != it_end; ++it) {
-        if ((*it).second->window() == win ||
-            (*it).first == win)
+        if (it->second->window() == win ||
+            it->first == win)
             return it->second;
     }
     return 0;
@@ -253,8 +250,8 @@ const FbTk::FbWindow *Workspace::find(Window win) const {
     WindowList::const_iterator it = m_windowlist.begin();
     WindowList::const_iterator it_end = m_windowlist.end();
     for (; it != it_end; ++it) {
-        if ((*it).second->window() == win ||
-            (*it).first == win)
+        if (it->second->window() == win ||
+            it->first == win)
             return it->second;
     }
     return 0;
@@ -270,7 +267,7 @@ void Workspace::updateFocusedWindow() {
 
     if (m_focused_window != 0) {
 
-        updateBackground(m_focused_window->window(), m_window_color);
+        m_focused_window->setBackgroundColor(m_window_color);
         m_focused_window->clear();
     }
 
@@ -282,15 +279,16 @@ void Workspace::updateFocusedWindow() {
     WindowList::const_iterator it = m_windowlist.begin();
     WindowList::const_iterator it_end = m_windowlist.end();
     for (; it != it_end; ++it) {
-        if ((*it).second == fbwin )
+        if (it->second == fbwin )
             break;
     }
 
     if (it == it_end)
         return;
 
-    updateBackground((*it).first, m_focused_window_color);
+    updateBackground(it->first, m_focused_window_color);
     fbwin->clear();
+    fbwin->raise();
     m_focused_window = fbwin;
 }
 
@@ -320,7 +318,10 @@ void Workspace::updateGeometry(Window win) {
         h = 1;
 
     fbwin->moveResize(x, y, w, h);
-    updateBackground(win, m_window_color);
+    if (m_focused_window == fbwin)
+        updateBackground(win, m_focused_window_color);
+    else
+        fbwin->setBackgroundColor(m_window_color);
 }
 
 void Workspace::updateBackground(Window win, const FbTk::Color &bg_color) {
@@ -337,10 +338,9 @@ void Workspace::updateBackground(Window win, const FbTk::Color &bg_color) {
             fbpix.copy(hints->icon_pixmap);
             fbpix.scale(fbwin->width(), fbwin->height());
             fbwin->setBackgroundPixmap(fbpix.drawable());
-        }
-        else
+        } else {
             fbwin->setBackgroundColor(bg_color);
-
+        }
         XFree(hints);
     }
     else

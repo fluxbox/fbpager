@@ -36,8 +36,10 @@ EventManager *EventManager::instance() {
 }
 
 EventManager::~EventManager() {
-    if (m_eventhandlers.size() != 0)
-        cerr<<"FbTk::EventManager: Warning: unregistered eventhandlers!"<<endl;
+    m_eventhandlers.clear();
+/*    if (m_eventhandlers.size() != 0)
+        cerr << "FbTk::EventManager: Warning: unregistered eventhandlers! " << m_eventhandlers.size() << endl;
+*/
 }
 
 void EventManager::handleEvent(XEvent &ev) {
@@ -57,7 +59,7 @@ void EventManager::remove(const FbWindow &win) {
     unregisterEventHandler(win.window());
 }
 
-Window EventManager::getEventWindow(XEvent &ev) {
+Window EventManager::getEventWindow(const XEvent &ev) {
     // we only have cases for events that differ from xany
     switch (ev.type) {
     case CreateNotify:
@@ -123,58 +125,64 @@ void EventManager::unregisterEventHandler(Window win) {
 
 void EventManager::dispatch(Window win, XEvent &ev, bool parent) {
     EventHandler *evhand = 0;
-    if (parent)
+    if (parent) {
+        if (m_parent.find(win) == m_parent.end())
+            return;
         evhand = m_parent[win];
-    else {
+    } else {
         win = getEventWindow(ev);
+        if (m_eventhandlers.find(win) == m_eventhandlers.end())
+            return;
         evhand = m_eventhandlers[win];
     }
 
-    if (evhand == 0)
+    if (evhand == 0) {
+        cerr << __func__ << "() NULL handler for win 0x" << hex << win << dec << endl;
         return;
+    }
 
     switch (ev.type) {
     case KeyPress:
         evhand->keyPressEvent(ev.xkey);
-	break;
+        break;
     case KeyRelease:
         evhand->keyReleaseEvent(ev.xkey);
-	break;
+        break;
     case ButtonPress:
         evhand->buttonPressEvent(ev.xbutton);
-	break;
+        break;
     case ButtonRelease:
         evhand->buttonReleaseEvent(ev.xbutton);
-	break;
+        break;
     case MotionNotify:
         evhand->motionNotifyEvent(ev.xmotion);
-	break;
+        break;
     case Expose:
         evhand->exposeEvent(ev.xexpose);
-	break;
+        break;
     case EnterNotify:
         evhand->enterNotifyEvent(ev.xcrossing);
-	break;
+        break;
     case LeaveNotify:
         evhand->leaveNotifyEvent(ev.xcrossing);
-	break;
+        break;
     default:
         evhand->handleEvent(ev);
-	break;
+        break;
     };
 
-    // find out which window is the parent and 
+    // find out which window is the parent and
     // dispatch event
     Window root, parent_win, *children = 0;
     unsigned int num_children;
-    if (XQueryTree(FbTk::App::instance()->display(), win, 
+    if (XQueryTree(FbTk::App::instance()->display(), win,
                    &root, &parent_win, &children, &num_children) != 0) {
-        if (children != 0) 
+        if (children != 0)
             XFree(children);
 
         if (parent_win != 0 &&
             parent_win != root) {
-            if (m_parent[parent_win] == 0)
+            if (m_parent.find(parent_win) == m_parent.end())
                 return;
 
             // dispatch event to parent

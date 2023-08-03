@@ -187,7 +187,7 @@ FbPager::FbPager(int screen_num, bool withdraw,
                                "FbPager.MoveInWorkspaceButton"),
     m_drag_to_workspace_button(m_resmanager, 3,
                                "fbpager.dragToWorkspaceButton",
-                               "FbPager.DragToWorkspaceButtton"),
+                               "FbPager.DragToWorkspaceButton"),
     m_align(m_resmanager, LEFT_TO_RIGHT,
             "fbpager.align",
             "FbPager.Align"),
@@ -239,7 +239,7 @@ FbPager::FbPager(int screen_num, bool withdraw,
     FbTk::EventManager::instance()->add(*this, m_window);
 
     // setup client window
-    m_window.setBackgroundColor(FbTk::Color((*m_color_str).c_str(),
+    m_window.setBackgroundColor(FbTk::Color(m_color_str->c_str(),
                                             m_window.screenNumber()));
     m_window.setAlpha(*m_alpha);
 
@@ -371,8 +371,8 @@ void FbPager::handleEvent(XEvent &event) {
         } else if (event.xconfigure.send_event == True){
             if (event.xconfigure.x != m_window.x() ||
                 event.xconfigure.y != m_window.y() ||
-                event.xconfigure.width != m_window.width() ||
-                event.xconfigure.height != m_window.height()) {
+                (unsigned int)event.xconfigure.width != m_window.width() ||
+                (unsigned int)event.xconfigure.height != m_window.height()) {
 
                 m_window.updateGeometry(event.xconfigure.x,
                                         event.xconfigure.y,
@@ -398,7 +398,7 @@ void FbPager::buttonPressEvent(XButtonEvent &event) {
     FB_ostringstream os;
 
     // double click
-    if (event.time - m_last_button_event.time < *m_multiclick_time &&
+    if (event.time - m_last_button_event.time < (Time)*m_multiclick_time &&
         event.button == m_last_button_event.button)
         os << event.button;
     else
@@ -411,8 +411,8 @@ void FbPager::buttonPressEvent(XButtonEvent &event) {
     m_last_button_event = event;
 
 
-    if (event.button == *m_move_in_workspace_button ||
-        event.button == *m_drag_to_workspace_button ) {
+    if ((int)event.button == *m_move_in_workspace_button ||
+        (int)event.button == *m_drag_to_workspace_button ) {
 
         m_move_window.curr_window = 0;
         m_move_window.client = ClientWindow(0);
@@ -428,7 +428,7 @@ void FbPager::buttonPressEvent(XButtonEvent &event) {
                 m_grab_y = event.y - win->y();
 
                 // drag -> move it above all workspaces
-                if (event.button == *m_drag_to_workspace_button) {
+                if ((int)event.button == *m_drag_to_workspace_button) {
                     m_move_window.curr_window->reparent(m_window,
                                                         m_move_window.curr_window->x() +
                                                         m_move_window.curr_workspace->window().x(),
@@ -446,7 +446,7 @@ void FbPager::buttonReleaseEvent(XButtonEvent &event) {
 
     ClientWindow client(0);
     if (m_move_window.curr_window != 0 &&
-        *m_move_in_workspace_button == event.button) {
+        *m_move_in_workspace_button == (int)event.button) {
 
         FbTk::FbWindow &win = *m_move_window.curr_window;
         int client_x = win.x(), client_y = win.y();
@@ -461,10 +461,10 @@ void FbPager::buttonReleaseEvent(XButtonEvent &event) {
 
     }
 
-    if (m_move_window.curr_window != 0 && *m_drag_to_workspace_button == event.button) {
+    if (m_move_window.curr_window != 0 && *m_drag_to_workspace_button == (int)event.button) {
 
         if (m_last_workspace_num >= 0 &&
-            m_last_workspace_num < m_workspaces.size()) {
+            m_last_workspace_num < (int)m_workspaces.size()) {
 
             Workspace* workspace = m_workspaces[m_last_workspace_num];
 
@@ -575,12 +575,12 @@ void FbPager::motionNotifyEvent(XMotionEvent &event) {
 
         Workspace* workspace= 0;
         size_t w = 0;
-        size_t old_workspace= m_last_workspace_num;
-        int left, top, right, bottom, x, y;
+        int old_workspace = m_last_workspace_num;
 
         // find out, on which workspace the motion started and
         // on which workspace we are now
         for(; w < m_workspaces.size(); ++w) {
+            int left, top, right, bottom, x, y;
 
             if (m_workspaces[w]->window() == event.window)
                 workspace= m_workspaces[w];
@@ -599,11 +599,12 @@ void FbPager::motionNotifyEvent(XMotionEvent &event) {
                 m_last_workspace_num= w;
         }
 
+        if (old_workspace == -1) old_workspace = m_last_workspace_num;
         int newx = event.x - m_grab_x;
         int newy = event.y - m_grab_y;
 
         // just move in current workspace
-        if (m_last_button_event.button == *m_move_in_workspace_button) {
+        if ((int)m_last_button_event.button == *m_move_in_workspace_button) {
 
             respectConstraints(newx, newy, *m_move_window.curr_window, workspace->window());
             m_move_window.curr_window->move(newx, newy);
@@ -619,7 +620,7 @@ void FbPager::motionNotifyEvent(XMotionEvent &event) {
             }
 
         // drag between the workspaces
-        } else if (m_last_button_event.button == *m_drag_to_workspace_button) {
+        } else if ((int)m_last_button_event.button == *m_drag_to_workspace_button) {
 
             newx += m_move_window.curr_workspace->window().x();
             newy += m_move_window.curr_workspace->window().y();
@@ -628,8 +629,12 @@ void FbPager::motionNotifyEvent(XMotionEvent &event) {
 
             m_move_window.curr_window->move(newx, newy);
 
-            if (*m_follow_drag && m_last_workspace_num != old_workspace)
-                sendChangeToWorkspace(m_last_workspace_num);
+            if (*m_follow_drag) {
+                // TODO follow dragging
+                if (m_last_workspace_num != old_workspace) {
+                    sendChangeToWorkspace(m_last_workspace_num);
+                }
+            }
         }
     }
 }
@@ -658,11 +663,12 @@ void FbPager::exposeEvent(XExposeEvent &event) {
 }
 
 void FbPager::clientMessageEvent(XClientMessageEvent &event) {
+/*
     char* atom = XGetAtomName( FbTk::App::instance()->display(),
                                event.message_type );
     cout << "ClientMessage ATOM: " << atom << endl;
     XFree( atom );
-
+*/
     ClientHandlerList::iterator it = m_clienthandlers.begin();
     ClientHandlerList::iterator it_end = m_clienthandlers.end();
     for (; it != it_end; ++it) {
@@ -682,7 +688,7 @@ void FbPager::propertyEvent(XPropertyEvent &event) {
 
 void FbPager::eraseAllWindows() {
     for_each(m_workspaces.begin(), m_workspaces.end(),
-             mem_fun(&Workspace::removeAll));
+             mem_fn(&Workspace::removeAll));
     WindowList::iterator it = m_windows.begin();
     for (; it != m_windows.end(); ++it) {
         FbTk::EventManager::instance()->remove(*it);
@@ -731,13 +737,13 @@ void FbPager::setFocusedWindow(Window win) {
     Workspace::setFocusedWindow(win);
     for_each(m_workspaces.begin(),
              m_workspaces.end(),
-             mem_fun(&Workspace::updateFocusedWindow));
+             mem_fn(&Workspace::updateFocusedWindow));
 }
 
 void FbPager::removeWindow(Window win) {
     for_each(m_workspaces.begin(),
              m_workspaces.end(),
-             bind2nd(mem_fun(&Workspace::remove), win));
+             bind(mem_fn(&Workspace::remove), placeholders::_1, win));
     FbTk::EventManager::instance()->remove(win);
     m_windows.erase(win);
 }
@@ -879,9 +885,9 @@ void FbPager::alignWorkspaces() {
             }
         }
 
-        if (next_pos_x + workspace_width > max_x)
+        if (next_pos_x + workspace_width > (unsigned int)max_x)
             max_x = next_pos_x + workspace_width;
-        if (next_pos_y + workspace_height > max_y)
+        if (next_pos_y + workspace_height > (unsigned int)max_y)
             max_y = next_pos_y + workspace_height;
 
         (*it)->window().move(next_pos_x, next_pos_y);
@@ -922,7 +928,7 @@ void FbPager::updateWindowHints(Window win) {
     for (; it != it_end; ++it)
         (*it)->getHints(client, hint);
 
-    for (int workspace = 0; workspace < m_workspaces.size(); workspace++) {
+    for (unsigned int workspace = 0; workspace < m_workspaces.size(); workspace++) {
         if (m_workspaces[workspace]->find(win) == 0) {
             // if the window is sticky then add it to this workspace too
             // and if it's not skip_pager nor type_dock
@@ -933,8 +939,8 @@ void FbPager::updateWindowHints(Window win) {
             } else
                 continue; // normal window without sticky
 
-        } else if (!(hint.flags() & WindowHint::WHINT_STICKY) &&
-                   hint.workspace() != workspace ||
+        } else if ((!(hint.flags() & WindowHint::WHINT_STICKY) &&
+                   (unsigned int)hint.workspace() != workspace) ||
                    (hint.flags() & WindowHint::WHINT_SKIP_PAGER) ||
                    (hint.flags() & WindowHint::WHINT_TYPE_DOCK)) {
             // if win not sticky and if it's not suppose to be on this
@@ -963,14 +969,14 @@ void FbPager::raiseWindow(Window win) {
     // raise on all workspace
     for_each(m_workspaces.begin(),
              m_workspaces.end(),
-             bind2nd(mem_fun(&Workspace::raiseWindow), win));
+             bind(mem_fn(&Workspace::raiseWindow), placeholders::_1, win));
 }
 
 void FbPager::lowerWindow(Window win) {
     // lower on all workspace
     for_each(m_workspaces.begin(),
              m_workspaces.end(),
-             bind2nd(mem_fun(&Workspace::lowerWindow), win));
+             bind(mem_fn(&Workspace::lowerWindow), placeholders::_1, win));
 }
 
 void FbPager::load(const std::string &filename) {
@@ -978,7 +984,7 @@ void FbPager::load(const std::string &filename) {
         cerr<<"Failed to load resource file: "<<filename<<endl;
 
     m_window.setAlpha(*m_alpha);
-    m_window.setBackgroundColor(FbTk::Color((*m_color_str).c_str(), m_window.screenNumber()));
+    m_window.setBackgroundColor(FbTk::Color(m_color_str->c_str(), m_window.screenNumber()));
     FbTk::Color bgcolor(m_background_color_str->c_str(), m_window.screenNumber());
     for (size_t workspace = 0; workspace < m_workspaces.size(); ++workspace) {
         m_workspaces[workspace]->setAlpha(*m_alpha);
@@ -994,7 +1000,7 @@ void FbPager::clearWindows() {
     m_window.clear();
     for_each(m_workspaces.begin(),
              m_workspaces.end(),
-             mem_fun(&Workspace::clearWindows));
+             mem_fn(&Workspace::clearWindows));
 }
 
 } // end namespace FbPager

@@ -69,6 +69,7 @@ std::string FbTk::Resource<FbPager::FbPager::Alignment>::getString() {
     case FbPager::FbPager::TOP_TO_BOTTOM:
         return "TopToBottom";
     }
+    return "<unknown>";
 }
 
 

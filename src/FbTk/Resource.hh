@@ -97,9 +97,9 @@ public:
         m_resourcelist.remove(&r);
     }
 
-    Resource_base *findResource(const std::string &resourcename);
-    std::string resourceValue(const std::string &resourcename);
-    void setResourceValue(const std::string &resourcename, const std::string &value);
+    Resource_base *findResource(const std::string &resname);
+    std::string resourceValue(const std::string &resname);
+    void setResourceValue(const std::string &resname, const std::string &value);
 
     // this marks the database as "in use" and will avoid reloading 
     // resources unless it is zero.
@@ -160,13 +160,13 @@ public:
         m_rm.removeResource(*this); // remove this from resource handler
     }
 
-    inline void setDefaultValue() {  m_value = m_defaultval; }
+    inline void setDefaultValue() override {  m_value = m_defaultval; }
     /// sets resource from string, specialized, must be implemented
-    void setFromString(const char *strval);
+    void setFromString(const char *strval) override;
     inline Resource<T>& operator = (const T& newvalue) { m_value = newvalue;  return *this;}
     /// specialized, must be implemented
     /// @return string value of resource
-    std::string getString();
+    std::string getString() override;
 
     inline T& operator*() { return m_value; }
     inline const T& operator*() const { return m_value; }

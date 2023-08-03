@@ -33,23 +33,23 @@ class Ewmh: public ClientHandler {
 public:
     Ewmh();
     ~Ewmh();
-    void setFocus(FbTk::FbWindow &win);
-    void moveResize(FbTk::FbWindow &win);
-    void sendToWorkspace(FbTk::FbWindow &win, int workspace);
-    void closeWindow(FbTk::FbWindow &win);
-    bool clientMessage(Pager &pager, XClientMessageEvent &event);
-    void changeWorkspace(int screen_num, int workspace);
-    void setHints(FbTk::FbWindow &win, WindowHint &hint);
-    void getHints(const FbTk::FbWindow &win, WindowHint &hint) const;
-    int numberOfWorkspaces(int screen_num) const;
+    void setFocus(FbTk::FbWindow &win) override;
+    void moveResize(FbTk::FbWindow &win) override;
+    void sendToWorkspace(FbTk::FbWindow &win, int workspace) override;
+    void closeWindow(FbTk::FbWindow &win) override;
+    bool clientMessage(Pager &pager, XClientMessageEvent &event) override;
+    void changeWorkspace(int screen_num, int workspace) override;
+    void setHints(FbTk::FbWindow &win, WindowHint &hint) override;
+    void getHints(const FbTk::FbWindow &win, WindowHint &hint) const override;
+    int numberOfWorkspaces(int screen_num) const override;
     void setDesktopLayout(FbTk::FbWindow &root,
                           Orientation orientation,
                           Corner starting_corner,
-                          unsigned int columns, unsigned int rows);
-    bool propertyNotify( Pager &pager, XPropertyEvent &event);
+                          unsigned int columns, unsigned int rows) override;
+    bool propertyNotify( Pager &pager, XPropertyEvent &event) override;
 private:
     bool m_support;
-    std::auto_ptr<Ewmh_priv> m_data;
+    std::unique_ptr<Ewmh_priv> m_data;
 };
 
 } // end namespace FbPager

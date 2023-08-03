@@ -53,7 +53,7 @@ struct PropT {
 };
 
 
-typedef std::auto_ptr<PropT> PropTPtr;
+typedef std::unique_ptr<PropT> PropTPtr;
 
 PropT *property(const FbTk::FbWindow &win, Atom atom,
                 Atom type, unsigned int num) {
@@ -240,13 +240,16 @@ bool Ewmh::clientMessage(Pager &pager, XClientMessageEvent &event) {
 void Ewmh::changeWorkspace(int screen_num, int workspace) {
     Display *disp = FbTk::App::instance()->display();
     XEvent event;
+    Status stat;
     event.xclient.display = disp;
     event.xclient.type = ClientMessage;
     event.xclient.window = RootWindow(disp, screen_num);
     event.xclient.message_type = m_data->current_desktop;
     event.xclient.format = 32;
     event.xclient.data.l[0] = workspace;
-    XSendEvent(disp, event.xclient.window, False, SubstructureNotifyMask, &event);
+    stat = XSendEvent(disp, event.xclient.window, False, SubstructureNotifyMask, &event);
+    if (stat != 1)
+        std::cerr << "XSendEvent() returned " << stat << std::endl;
 }
 
 void Ewmh::setHints(FbTk::FbWindow &win, WindowHint &hint) {
@@ -268,13 +271,13 @@ void Ewmh::setHints(FbTk::FbWindow &win, WindowHint &hint) {
     }
 
     if (hint.flags() & WindowHint::WHINT_TYPE_DOCK) {
-        cerr << "Setting type dock." << endl;
-        Atom data = m_data->type_dock;
+//        cerr << "Setting type dock." << endl;
+        Atom dock = m_data->type_dock;
         win.changeProperty(m_data->wm_type,
                            XA_ATOM,
                            32,
                            PropModeReplace,
-                           (unsigned char *)&data, 1);
+                           (unsigned char *)&dock, 1);
     }
 
     std::vector<Atom> states;
@@ -288,10 +291,10 @@ void Ewmh::setHints(FbTk::FbWindow &win, WindowHint &hint) {
         states.push_back(m_data->state_hidden);
     if (hint.flags() & WindowHint::WHINT_LAYER_TOP){
         states.push_back(m_data->state_above);
-        cerr << "Setting state above." << endl;
+//        cerr << "Setting state above." << endl;
     }
     if (hint.flags() & WindowHint::WHINT_LAYER_BOTTOM) {
-        cerr<< "Setting state bottom." << endl;
+//        cerr<< "Setting state bottom." << endl;
         states.push_back(m_data->state_below);
     }
 
@@ -316,7 +319,7 @@ void Ewmh::getHints(const FbTk::FbWindow &win, WindowHint &hint) const {
     if (p.get() != 0 && p->data != 0) {
 
         Atom *states = (Atom *)(p->data);
-        for (int i=0; i<p->num; ++i) {
+        for (unsigned int i=0; i<p->num; ++i) {
             if (states[i] == m_data->state_skip_pager)
                 hint.add(WindowHint::WHINT_SKIP_PAGER);
             else if (states[i] == m_data->state_skip_taskbar)

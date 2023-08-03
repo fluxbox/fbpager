@@ -1,8 +1,7 @@
 #include "PropertyTools.hh"
-
 #include "FbTk/App.hh"
-
 #include <X11/Xatom.h>
+#include <iostream>
 
 namespace PropertyTools {
 
@@ -14,7 +13,7 @@ std::string getAtomName(Atom atom) {
 }
 
 
-unsigned int getIntProperty(Window win, Atom atom) throw (PropertyException){
+unsigned int getIntProperty(Window win, Atom atom) {
     Atom ret_type = 0;
     int fmt = 0;
     unsigned long nitems = 0, bytes_after = 0;
@@ -23,7 +22,12 @@ unsigned int getIntProperty(Window win, Atom atom) throw (PropertyException){
                             atom, 0, 1, False, XA_CARDINAL,
                             &ret_type, &fmt, &nitems,
                             &bytes_after, (unsigned char**)&data) != Success) {
+        std::cerr << __func__ << "() PropertyException, n=" << nitems << std::endl;
         throw PropertyException(getAtomName(atom));
+    }
+    if (!data) {
+        std::cerr << __func__ << "() data == NULL, n=" << nitems << std::endl;
+        return 0;
     }
 
     unsigned int val = (unsigned int)( *data );
@@ -31,7 +35,7 @@ unsigned int getIntProperty(Window win, Atom atom) throw (PropertyException){
     return val;
 }
 
-Window getWinProperty(Window win, Atom atom) throw (PropertyException){
+Window getWinProperty(Window win, Atom atom) {
     Atom ret_type = 0;
     int fmt = 0;
     unsigned long nitems = 0, bytes_after = 0;
@@ -40,7 +44,12 @@ Window getWinProperty(Window win, Atom atom) throw (PropertyException){
                             atom, 0, 1, False, XA_WINDOW,
                             &ret_type, &fmt, &nitems,
                             &bytes_after, (unsigned char**)&data) != Success) {
+        std::cerr << __func__ << "() PropertyException, n=" << nitems << std::endl;
         throw PropertyException(getAtomName(atom));
+    }
+    if (!data) {
+        std::cerr << __func__ << "() data == NULL, n=" << nitems << std::endl;
+        return (Window)0;
     }
 
     Window val = (Window)( *data );
@@ -48,8 +57,7 @@ Window getWinProperty(Window win, Atom atom) throw (PropertyException){
     return val;
 }
 
-void getWinArrayProperty(Window win, Atom atom, std::vector<Window> &cont)
-    throw (PropertyException) {
+void getWinArrayProperty(Window win, Atom atom, std::vector<Window> &cont) {
     Atom ret_type = 0;
     int fmt = 0;
     unsigned long nitems = 0, bytes_after = 0;
@@ -58,7 +66,12 @@ void getWinArrayProperty(Window win, Atom atom, std::vector<Window> &cont)
                             atom, 0, 0xFFFFFF, False, XA_WINDOW,
                             &ret_type, &fmt, &nitems,
                             &bytes_after, (unsigned char**)&data) != Success) {
+        std::cerr << __func__ << "() PropertyException, n=" << nitems << std::endl;
         throw PropertyException(getAtomName(atom));
+    }
+    if (!data) {
+        std::cerr << __func__ << "() data == NULL, n=" << nitems << std::endl;
+        return;
     }
     for (unsigned long i = 0; i < nitems; ++i ) {
         cont.push_back(((Window*)data)[i]);
