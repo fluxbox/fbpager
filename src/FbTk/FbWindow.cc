@@ -146,6 +146,7 @@ FbWindow::~FbWindow() {
 
 
 void FbWindow::setBackgroundColor(const FbTk::Color &bg_color) {
+    XSync(s_display, False);
     XSetWindowBackground(s_display, m_window, bg_color.pixel());
 }
 
