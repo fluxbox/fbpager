@@ -45,6 +45,8 @@ Pixmap getRootPixmap(int screen_num) {
     Pixmap root_pm = 0;
     // get root pixmap for transparency
     Display *disp = FbTk::App::instance()->display();
+    if (disp == 0)
+        cerr << "getRootPixmap(): disp == NULL" << endl;
     Atom real_type;
     int real_format;
     unsigned long items_read, items_left;
@@ -71,8 +73,8 @@ FbWindow::FbWindow():m_parent(0), m_screen_num(0), m_window(0), m_x(0), m_y(0),
                      m_width(0), m_height(0), m_border_width(0), m_depth(0), m_destroy(true),
                      m_buffer_pm(0) {
 
-    if (s_display == 0)
-        s_display = App::instance()->display();
+    if (s_display == 0) s_display = App::instance()->display();
+    if (s_display == 0) cerr << "FbWindow(): s_display couldn't be initialised" << endl;
 }
 
 FbWindow::FbWindow(const FbWindow& the_copy):m_parent(the_copy.parent()), 
@@ -82,8 +84,8 @@ FbWindow::FbWindow(const FbWindow& the_copy):m_parent(the_copy.parent()),
                                              m_border_width(the_copy.borderWidth()), 
                                              m_depth(the_copy.depth()), m_destroy(true),
                                              m_buffer_pm(0) {
-    if (s_display == 0)
-        s_display = App::instance()->display();
+    if (s_display == 0) s_display = App::instance()->display();
+    if (s_display == 0) cerr << "FbWindow(the_copy): s_display couldn't be initialised" << endl;
 
     the_copy.m_window = 0;
 }
@@ -100,7 +102,10 @@ FbWindow::FbWindow(int screen_num,
     m_destroy(true),
     m_buffer_pm(0) {
 	
-    create(RootWindow(FbTk::App::instance()->display(), screen_num), 
+    Display *disp = FbTk::App::instance()->display();
+    if (disp == 0)
+        cerr << __func__ << "(): disp == NULL" << endl;
+    create(RootWindow(disp, screen_num),
            x, y, width, height, eventmask,
            override_redirect, depth, class_type);
 };
@@ -115,7 +120,7 @@ FbWindow::FbWindow(const FbWindow &parent,
     m_destroy(true),
     m_buffer_pm(0) { 
 
-    create(parent.window(), x, y, width, height, eventmask, 
+    create(parent.window(), x, y, width, height, eventmask,
            override_redirect, depth, class_type);
 	
 	
@@ -131,8 +136,8 @@ FbWindow::FbWindow(Window client):m_parent(0),
                                   m_destroy(false),  // don't destroy this window
                                   m_buffer_pm(0) {
 
-    if (s_display == 0)
-        s_display = App::instance()->display();
+    if (s_display == 0) s_display = App::instance()->display();
+    if (s_display == 0) cerr << "s_display couldn't be initialised" << endl;
 
     setNew(client);
 }
@@ -140,46 +145,63 @@ FbWindow::FbWindow(Window client):m_parent(0),
 FbWindow::~FbWindow() {
     if (m_window != 0 && m_destroy) {
         FbTk::EventManager::instance()->remove(m_window);
-        XDestroyWindow(s_display, m_window);
+        if(s_display != 0)
+            XDestroyWindow(s_display, m_window);
     }
 }
 
 
 void FbWindow::setBackgroundColor(const FbTk::Color &bg_color) {
-    XSync(s_display, False);
-    XSetWindowBackground(s_display, m_window, bg_color.pixel());
+    if (s_display == 0) s_display = App::instance()->display();
+    else XSync(s_display, False);
+    if (s_display == 0) cerr << __func__ << "(): s_display couldn't be initialised" << endl;
+    else XSetWindowBackground(s_display, m_window, bg_color.pixel());
 }
 
 void FbWindow::setBackgroundPixmap(Pixmap bg_pixmap) {
-    XSetWindowBackgroundPixmap(s_display, m_window, bg_pixmap);
+    if (s_display == 0) s_display = App::instance()->display();
+    if (s_display == 0) cerr << __func__ << "(): s_display couldn't be initialised" << endl;
+    else XSetWindowBackgroundPixmap(s_display, m_window, bg_pixmap);
 }
 
 void FbWindow::setBorderColor(const FbTk::Color &border_color) {
-    XSetWindowBorder(s_display, m_window, border_color.pixel());
+    if (s_display == 0) s_display = App::instance()->display();
+    if (s_display == 0) cerr << __func__ << "(): s_display couldn't be initialised" << endl;
+    else XSetWindowBorder(s_display, m_window, border_color.pixel());
 }
 
 void FbWindow::setBorderWidth(unsigned int size) {	
-    XSetWindowBorderWidth(s_display, m_window, size);
+    if (s_display == 0) s_display = App::instance()->display();
+    if (s_display == 0) cerr << __func__ << "(): s_display couldn't be initialised" << endl;
+    else XSetWindowBorderWidth(s_display, m_window, size);
     m_border_width = size;
 }
 
 void FbWindow::setName(const char *name) {
-    XStoreName(s_display, m_window, name);
+    if (s_display == 0) s_display = App::instance()->display();
+    if (s_display == 0) cerr << __func__ << "(): s_display couldn't be initialised" << endl;
+    else XStoreName(s_display, m_window, name);
 }
 
 void FbWindow::setEventMask(long mask) {
-    XSelectInput(s_display, m_window, mask);
+    if (s_display == 0) s_display = App::instance()->display();
+    if (s_display == 0) cerr << __func__ << "(): s_display couldn't be initialised" << endl;
+    else XSelectInput(s_display, m_window, mask);
 }
 
 void FbWindow::clear() {
-    XClearWindow(s_display, m_window);
+    if (s_display == 0) s_display = App::instance()->display();
+    if (s_display == 0) cerr << __func__ << "(): s_display couldn't be initialised" << endl;
+    else XClearWindow(s_display, m_window);
     updateTransparent();
 }
 
 void FbWindow::clearArea(int x, int y, 
                          unsigned int width, unsigned int height, 
                          bool exposures) {
-    XClearArea(s_display, window(), x, y, width, height, exposures);
+    if (s_display == 0) s_display = App::instance()->display();
+    if (s_display == 0) cerr << __func__ << "(): s_display couldn't be initialised" << endl;
+    else XClearArea(s_display, window(), x, y, width, height, exposures);
     updateTransparent(x, y, width, height);
 }
 
@@ -286,8 +308,8 @@ FbWindow &FbWindow::operator = (Window win) {
 }
 
 void FbWindow::setNew(Window win) {
-    if (s_display == 0)
-        s_display = App::instance()->display();
+    if (s_display == 0) s_display = App::instance()->display();
+    if (s_display == 0) cerr << __func__ << "(): s_display couldn't be initialised" << endl;
 
     if (m_window != 0 && m_destroy)
         XDestroyWindow(s_display, m_window);
@@ -323,39 +345,57 @@ void FbWindow::setNew(Window win) {
 }
 
 void FbWindow::show() {
-    XMapWindow(s_display, m_window);
+    if (s_display == 0) s_display = App::instance()->display();
+    if (s_display == 0) cerr << __func__ << "(): s_display couldn't be initialised" << endl;
+    else XMapWindow(s_display, m_window);
 }
 
 void FbWindow::showSubwindows() {
-    XMapSubwindows(s_display, m_window);
+    if (s_display == 0) s_display = App::instance()->display();
+    if (s_display == 0) cerr << __func__ << "(): s_display couldn't be initialised" << endl;
+    else XMapSubwindows(s_display, m_window);
 }
 
 void FbWindow::hide() {
-    XUnmapWindow(s_display, m_window);
+    if (s_display == 0) s_display = App::instance()->display();
+    if (s_display == 0) cerr << __func__ << "(): s_display couldn't be initialised" << endl;
+    else XUnmapWindow(s_display, m_window);
 }
 
 void FbWindow::lower() {
-    XLowerWindow(s_display, window());
+    if (s_display == 0) s_display = App::instance()->display();
+    if (s_display == 0) cerr << __func__ << "(): s_display couldn't be initialised" << endl;
+    else XLowerWindow(s_display, window());
 }
 
 void FbWindow::raise() {
-    XRaiseWindow(s_display, window());
+    if (s_display == 0) s_display = App::instance()->display();
+    if (s_display == 0) cerr << __func__ << "(): s_display couldn't be initialised" << endl;
+    else XRaiseWindow(s_display, window());
 }
 
 void FbWindow::setInputFocus(int revert_to, int time) {
-    XSetInputFocus(s_display, window(), revert_to, time);
+    if (s_display == 0) s_display = App::instance()->display();
+    if (s_display == 0) cerr << __func__ << "(): s_display couldn't be initialised" << endl;
+    else XSetInputFocus(s_display, window(), revert_to, time);
 }
 
 void FbWindow::setCursor(Cursor cur) {
-    XDefineCursor(s_display, window(), cur); 
+    if (s_display == 0) s_display = App::instance()->display();
+    if (s_display == 0) cerr << __func__ << "(): s_display couldn't be initialised" << endl;
+    else XDefineCursor(s_display, window(), cur);
 }
 
 void FbWindow::unsetCursor() {
-    XUndefineCursor(s_display, window());
+    if (s_display == 0) s_display = App::instance()->display();
+    if (s_display == 0) cerr << __func__ << "(): s_display couldn't be initialised" << endl;
+    else XUndefineCursor(s_display, window());
 }
 
 void FbWindow::reparent(const FbWindow &parent, int x, int y) {
-    XReparentWindow(s_display, window(), parent.window(), x, y);
+    if (s_display == 0) s_display = App::instance()->display();
+    if (s_display == 0) cerr << __func__ << "(): s_display couldn't be initialised" << endl;
+    else XReparentWindow(s_display, window(), parent.window(), x, y);
     m_parent = &parent;
     updateGeometry();
 }
@@ -369,7 +409,7 @@ bool FbWindow::property(Atom property,
                         unsigned long *nitems_return,
                         unsigned long *bytes_after_return,
                         unsigned char **prop_return) const {
-    if (XGetWindowProperty(s_display, window(), 
+    if (s_display && XGetWindowProperty(s_display, window(),
                            property, long_offset, long_length, do_delete, 
                            req_type, actual_type_return,
                            actual_format_return, nitems_return,
@@ -385,7 +425,9 @@ void FbWindow::changeProperty(Atom property, Atom type,
                               const unsigned char *data,
                               int nelements) {
     
-    XChangeProperty(s_display, m_window, property, type,
+    if (s_display == 0) s_display = App::instance()->display();
+    if (s_display == 0) cerr << __func__ << "(): s_display couldn't be initialised" << endl;
+    else XChangeProperty(s_display, m_window, property, type,
                     format, mode, 
                     (unsigned char*)data, nelements);
 }
@@ -396,7 +438,7 @@ int FbWindow::screenNumber() const {
 
 long FbWindow::eventMask() const {
     XWindowAttributes attrib;
-    if (XGetWindowAttributes(s_display, window(), 
+    if (s_display && XGetWindowAttributes(s_display, window(),
                              &attrib) == Success) {
         return attrib.your_event_mask;
     }
@@ -418,20 +460,22 @@ void FbWindow::updateGeometry() {
 
     Window root;
     unsigned int border_width, depth;
-    XGetGeometry(s_display, m_window, &root, &m_x, &m_y,
+    if (s_display == 0) s_display = App::instance()->display();
+    if (s_display == 0) cerr << __func__ << "(): s_display couldn't be initialised" << endl;
+    else { XGetGeometry(s_display, m_window, &root, &m_x, &m_y,
                  (unsigned int *)&m_width, (unsigned int *)&m_height, 
                  &border_width, &depth);
-    m_depth = depth;
+        m_depth = depth;
+    }
 }
 
 void FbWindow::create(Window parent, int x, int y,
                       unsigned int width, unsigned int height, 
                       long eventmask, bool override_redirect,
                       int depth, int class_type) {
-                     
 
-    if (s_display == 0)
-        s_display = FbTk::App::instance()->display();
+    if (s_display == 0) s_display = App::instance()->display();
+    if (s_display == 0) cerr << __func__ << "(): s_display couldn't be initialised" << endl;
 
     m_border_width = 0;
 

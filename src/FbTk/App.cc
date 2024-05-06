@@ -25,6 +25,7 @@
 
 #include <cassert>
 #include <string>
+#include <iostream>
 
 namespace FbTk {
 
@@ -45,6 +46,8 @@ App::App(const char *displayname):m_done(false), m_display(0) {
     if (displayname != 0 && displayname[0] == '\0')
         displayname = 0;
     m_display = XOpenDisplay(displayname);
+    if (m_display == 0)
+        std::cerr << "App(" << displayname << "): m_display couldn't be initialised" << std::endl;
 }
 
 App::~App() {
